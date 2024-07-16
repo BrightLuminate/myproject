@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Success</title>
+    <style>
+        .uploaded-image {
+            max-width: 300%; 
+            height: auto; 
+            max-height: 400px; 
+        }
+    </style>
+</head>
+<body>
+    <h2>Image upload complete!</h2>
+    {% if image_data %}
+        <img src="data:image/jpeg;base64,{{ image_data }}" alt="Uploaded Image" class="uploaded-image">
+        <!-- <img src="https://factorys.s3.amazonaws.com/lpe.jpg"/> -->
+    {% else %}
+        <p>No image found.</p>
+    {% endif %}
+</body>
+</html>

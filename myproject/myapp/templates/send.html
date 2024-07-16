@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>메일 전송 완료</title>
+    <script src="https://kit.fontawesome.com/3a115195d8.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        hr {
+            position: relative;
+            top: -60px; 
+            right: 60%;  
+            border-top: 2px solid #ffffff;
+            width: 220%;
+        }
+        .message {
+            font-size: 20px;
+            line-height: 15;
+            color:black;
+        }
+        .jb {
+            opacity: 0.4; /* 조정된 투명도 */
+            background-color: chartreuse;
+            border-radius: 50%; /* 원형 모양 */
+            width: 130px; /* 크기 조정 */
+            height: 130px;
+            top: 40px;
+            position: relative;
+            margin: auto; /* 중앙 정렬 */
+        }
+        .icon {
+            font-size: 60px; /* 아이콘 크기 조정 */
+            position: absolute;
+            animation: slideInDiagonal 2.5s linear infinite; /* 무한 반복, 선형 속도 */
+            top: 50px;
+            left: 20px;
+
+        }
+        @keyframes slideInDiagonal {
+            from {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            to {
+                transform: translate(1vw, -3vh);
+                opacity: 0;
+            }
+            
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="jb">
+            <div class="icon">
+            <i class="fa-regular fa-paper-plane"></i>
+            </div>
+        </div>
+        <div class="message">메일을 성공적으로 보냈습니다.</div>
+        <hr>
+    </div>
+</body>
+</html>
