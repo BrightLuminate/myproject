@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'rest_framework',
 ]
 
 
@@ -137,7 +138,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Ensure your BASE_DIR is set appr
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
