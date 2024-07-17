@@ -13,8 +13,7 @@ from .models import *
 #ko
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .ko_serializers import TestDataSerializer
-
+from .serializers import TestDataSerializer
 
 logger = logging.getLogger('django')
 
@@ -162,12 +161,20 @@ def image(request):
 
 
 
-# ko 시리얼라이즈
+# ko 시리얼라이즈 Reat 뭔가를 보여주는 조회 
 @api_view(['GET'])
 def getTestDatas(request, id):
     datas = Images.objects.get(id = id)
     serializer = TestDataSerializer(datas, many=False)
     print(serializer.data["image_url"])
     return Response(serializer.data)
+
+@api_view(['POST'])
+def createTestDatas(request):
+    serialzer = TestDataSerializer(data=request.data)
+    if serialzer.is_valid():
+        serialzer.save()  
+        return Response(serialzer.data, status=201)
+    return Response(serialzer.errors, status=400)
 
 
