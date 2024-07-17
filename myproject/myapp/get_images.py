@@ -3,8 +3,8 @@ import pymysql
 from io import BytesIO
 from datetime import datetime
 import pytz
-from matplotlib import pyplot as plt
-from matplotlib import image as mp_img
+import os
+import mimetypes
 
 # MySQL 연결 함수
 def mysql_connection():
@@ -43,9 +43,9 @@ def s3_connection():
     try:
         s3 = boto3.client(
             service_name="s3",
-            region_name="us-east-2",
-            aws_access_key_id="AKIA2UC3AWOOPLLJY36R",
-            aws_secret_access_key="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",
+            region_name='us-east-2',
+            aws_access_key_id='AKIA2UC3AWOOPLLJY36R',
+            aws_secret_access_key='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',
         )
     except Exception as e:
         print(e)
@@ -57,7 +57,17 @@ def s3_connection():
 # 파일을 S3에 업로드하고 URL을 반환하는 함수
 def upload_file_to_s3_and_get_url(s3, file_name, bucket_name, object_name):
     try:
-        s3.upload_file(file_name, bucket_name, object_name)
+        content_type, _ = mimetypes.guess_type(file_name)  # 파일의 MIME 타입 추정
+        if content_type is None:
+            content_type = 'binary/octet-stream'  # 기본값
+
+        with open(file_name, 'rb') as file:
+            s3.upload_fileobj(
+                file,
+                bucket_name,
+                object_name,
+                ExtraArgs={'ContentType': content_type}  # 적절한 Content-Type 설정
+            )
         print("File uploaded successfully")
         s3_url = f"https://{bucket_name}.s3.amazonaws.com/{object_name}"
         return s3_url
@@ -80,8 +90,8 @@ def fetch_images_from_mysql(connection):
 if __name__ == "__main__":
     s3 = s3_connection()
     if s3:
-        file_name = "./myproject/myapp/img/cat.PNG"
-        object_name = "k.jpg"
+        file_name = "./myproject/myapp/img/sss.png"
+        object_name = "아앙.jpg"
         s3_url = upload_file_to_s3_and_get_url(s3, file_name, "factorys", object_name)
         if s3_url:
             connection = mysql_connection()
