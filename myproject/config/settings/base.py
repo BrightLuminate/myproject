@@ -130,6 +130,41 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='asdf71394@gmail.com')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='lqeypzafwverqymt')
 
+# DRF 설정 Django 앱 추가 
+# DEFAULT_RENDERER_CLASSES: 이 옵션은 콘텐츠 협상에 사용되는 기본 렌더러 클래스를 지정합니다. API 응답이 어떤 형식으로 직렬화될지를 결정합니다.
+# DEFAULT_AUTHENTICATION_CLASSES: 이 옵션은 요청 인증에 사용되는 기본 인증 클래스를 설정합니다. API 뷰에 적용되는 인증 메커니즘을 정의합니다.
+# DEFAULT_PERMISSION_CLASSES: 이 옵션은 권한 부여에 사용되는 기본 권한 클래스를 지정합니다. API 뷰에 적용되는 접근 제어 규칙을 결정합니다.
+# DEFAULT_PAGINATION_CLASS: 이 옵션은 API 응답의 페이지네이션에 사용되는 기본 페이지네이션 클래스를 설정합니다. API 결과가 페이지로 나뉘어 표시되는 방식을 제어합니다.
+# DEFAULT_FILTER_BACKENDS: 이 옵션은 API 데이터 필터링에 사용되는 기본 필터 백엔드를 지정합니다. API 클라이언트가 사용할 수 있는 필터링 옵션을 정의할 수 있습니다.
+# DEFAULT_THROTTLE_CLASSES: 이 옵션은 요청 제한에 사용되는 기본 제한 클래스를 설정합니다. 클라이언트가 API에 요청을 할 수 있는 속도를 제한합니다.
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+      'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day',
+    },
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
 
 # settings.py
 
