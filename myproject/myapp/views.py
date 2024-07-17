@@ -10,6 +10,11 @@ import base64
 from .forms import ImageUploadForm
 from .models import *
 
+#ko
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .ko_serializers import TestDataSerializer
+
 
 logger = logging.getLogger('django')
 
@@ -154,3 +159,15 @@ def image(request):
         })
     else:
         return render(request, 'images.html', {'image_data_list': None})
+
+
+
+# ko 시리얼라이즈
+@api_view(['GET'])
+def getTestDatas(request, id):
+    datas = Images.objects.get(id = id)
+    serializer = TestDataSerializer(datas, many=False)
+    print(serializer.data["image_url"])
+    return Response(serializer.data)
+
+
