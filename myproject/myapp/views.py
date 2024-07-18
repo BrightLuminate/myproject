@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
@@ -14,6 +15,8 @@ from .models import *
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import TestDataSerializer
+from dateutil import parser
+
 
 logger = logging.getLogger('django')
 
@@ -161,7 +164,9 @@ def image(request):
 
 
 
-# ko 시리얼라이즈 Reat 뭔가를 보여주는 조회 
+# API 로직
+
+# id 값을 받아서 read 해주는 api
 @api_view(['GET'])
 def getTestDatas(request, id):
     datas = Images.objects.get(id = id)
@@ -169,6 +174,7 @@ def getTestDatas(request, id):
     print(serializer.data["image_url"])
     return Response(serializer.data)
 
+# create 해주는 api
 @api_view(['POST'])
 def createTestDatas(request):
     serialzer = TestDataSerializer(data=request.data)
@@ -178,3 +184,11 @@ def createTestDatas(request):
     return Response(serialzer.errors, status=400)
 
 
+# 특정 날짜 read 해주는 api
+@api_view(['GET'])
+def getTestDate(request):
+
+    datas = Images.objects.filter(Detection_Time__date=datetime(2024,7,18))
+    serializer = TestDataSerializer(datas, many=True)
+
+    return Response(serializer.data)

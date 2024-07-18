@@ -10,6 +10,10 @@ class TestDataSerializer(serializers.ModelSerializer):
 
 
 class TestDataSerializer(serializers.ModelSerializer):
+
+    #Detection_Time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    Detection_Time = serializers.DateTimeField(format="%Y-%m-%d")
     class Meta:
         model = Images
         fields = '__all__'
+    
