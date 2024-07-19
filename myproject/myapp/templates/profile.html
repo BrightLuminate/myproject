@@ -1,24 +1,346 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    {% extends 'base.html' %}
+{% extends "base.html" %}
+{% block title %}SMART AI FACTORY{% endblock %}
+{% block content %}
+    <div class="navigation w-100 h-100">
+        <div class="left h-100 d-inline-block">
+            <p class="txt01 notosans500" style="margin-bottom: 29px;">스마트 AI 팩토리</p>
+            <div class="box_center">
+                <p class="face"><img src="\static\img\001.png" style="width: 100%;" /></p>
+                <p class="face_line posion_abso"></p>
+            </div>
+            <div class="gray70 fons11 txt_cen" style="padding-top: 20px;">김주임, 이사원</div>
+            <div class="flex_center" style="margin:10px 0 40px;">
+                <span class="uil uil-setting gray70 fons20 ico"></span>
+                <span class="uil uil-envelope gray70 fons20 ico"></span>
+                <a href="/signout"><span class="uil uil-power gray70 fons20 ico"></span></a>
+            </div>
+            <div>
+                <div class="fons15 menu_on" style="border-top: 1px solid #373737; padding-top: 13px;">
+                    <span>모니터링</span>
+                    <span class="uil uil-angle-right-b fons19"></span>
+                </div>
+                <div class="fons15 menu" style="padding-top: 13px;">
+                    <span>기기상태</span>
+                    <span class="uil uil-angle-right-b fons19"></span>
+                </div>
+                <div class="fons15 menu" style="padding-top: 13px;">
+                    <span>품질검사</span>
+                    <span class="uil uil-angle-right-b fons19"></span>
+                </div>
+                <div class="fons15 menu" style="padding-top: 13px;">
+                    <span>로그기록</span>
+                    <span class="uil uil-angle-right-b fons19"></span>
+                </div>
+            </div>
+        </div>
 
-    {% block title %}Login{% endblock %}
-    
-    {% block content %}
-        
-        {% if user.is_authenticated %}
-             {{ user.username }}!
-            <a href="/signout" class="btn btn-danger">Logout</a>
-        {% else %}
-            <a href="/signin" class="btn btn-primary"><span class="glyphicon glyphicon-log-in"></span>Login</a>
-            <a href="/signup" class="btn btn-success">Sign up</a>
-        {% endif %}
-    {% endblock %}    
-</body>
-</html>
+        <div class="contain_box">
+            <div class="top_box">
+                <span class="fonts14 grayb7 top_box_center">
+                    <span class="uil uil-bars fons19 ico"></span>
+                    <span class="Poppin400">Smart AI Factory 관제 시스템</span>
+                    <span>|</span>
+                    <span class="whit notosans400">모니터링</span>
+                </span>
+                <div>
+                    <span style="margin-right: 10px;">{{ user.username }} 님 ! </span>
+                    <button type="button" class="btn btn-outline-dark" style="font-size: 10px;">메일</button>
+                    {% if user.is_authenticated %}
+                    <button type="button" class="btn btn-dark" style="font-size: 10px;" onclick="location.href='/signout'">로그아웃</button>
+                    {% endif %} 
+                </div>
+            </div>
+            <div class="center_box_01_01 fons13 graycc">
+                <span>목표생산량 5,000 개</span>
+                <span>현재 생산 5,000 개</span>
+                <span>불량률 5,000 개</span>
+            </div>
+
+            <div class="center_box_01_02">
+                <div class="card" style="width:50%;">
+                    <div class="card-body">
+                        <p class="notosans400 fons13">작업현황</p>
+                        
+                        <div class="map_box" style="overflow: hidden; margin-bottom: 15px;">
+                            
+                            <img src="\static\img\map_short.png" style="height:100%;"/>
+                            <div style="position: absolute; z-index: 100; top:77px; left: 50px;" >
+                                <i type="button" class="dot_blue"></i>
+                            </div>
+                            <div style="position: absolute; z-index: 100; top:85px; left: 65px;" >
+                                <i type="button" class="dot_blue"></i>
+                            </div>
+                            <div style="position: absolute; z-index: 100; top:105px; left: 80px;" >
+                                <i type="button" class="dot_blue"></i>
+                            </div>
+                        </div>
+                        <div class="nav_right fons10 gray70">
+                            <p class="ico_btn">
+                                <span class="dot_blue"></span>
+                                <span>작업중</span>
+                            </p>
+                            <p class="ico_btn">
+                                <span class="dot_yello"></span>
+                                <span>충전중</span>
+                            </p>
+                            <p class="ico_btn">
+                                <span class="dot_glay"></span>
+                                <span>대기중</span>
+                            </p>
+                            <p class="ico_btn">
+                                <span class="dot_red"></span>
+                                <span>중단</span>
+                            </p>
+                        </div>
+                        <div class="box_car_between">
+                            <div class="box_car_00">
+                                <div class="box_car_between">
+                                    <div class="fons22 roboto500">
+                                        HD-1500-00
+                                        <span class="uil uil-signal-alt fons17"></span>
+                                    </div>
+                                    <div class="fons22 roboto400">
+                                        50%
+                                    </div>
+                                </div>
+                                <div class="box_car_between">
+                                    <div class="ico_btn fons10">
+                                        <span class="dot_blue"></span>
+                                        <span>작업중</span>
+                                    </div>
+                                    <div class="fons10 gray70">
+                                        A-01로 이동중
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box_car_00">
+                                <div class="box_car_between">
+                                    <div class="fons22 roboto500">
+                                        HD-1500-00
+                                        <span class="uil uil-signal-alt fons17"></span>
+                                    </div>
+                                    <div class="fons22 roboto400">
+                                        17%
+                                    </div>
+                                </div>
+                                <div class="box_car_between">
+                                    <div class="ico_btn fons10">
+                                        <span class="dot_yello"></span>
+                                        <span>충전중</span>
+                                    </div>
+                                    <div class=" fons10 gray70">
+                                        A-01로 이동중
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box_car_between" style="margin-top:8px;">
+                            <div class="box_car_00">
+                                <div class="box_car_between">
+                                    <div class="fons22 roboto500">
+                                        HD-1500-00
+                                        <span class="uil uil-signal-alt fons17"></span>
+                                    </div>
+                                    <div class="fons22 roboto400">
+                                        50%
+                                    </div>
+                                </div>
+                                <div class="box_car_between">
+                                    <div class="ico_btn fons10">
+                                        <span class="dot_blue"></span>
+                                        <span>작업중</span>
+                                    </div>
+                                    <div class="fons10 gray70">
+                                        A-01로 이동중
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box_car_00">
+                                <div class="box_car_between">
+                                    <div class="fons22 roboto500">
+                                        HD-1500-00
+                                        <span class="uil uil-signal-alt fons17"></span>
+                                    </div>
+                                    <div class="fons22 roboto400">
+                                        17%
+                                    </div>
+                                </div>
+                                <div class="box_car_between">
+                                    <div class="ico_btn fons10">
+                                        <span class="dot_yello"></span>
+                                        <span>충전중</span>
+                                    </div>
+                                    <div class=" fons10 gray70">
+                                        A-01로 이동중
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box_car_between" style="margin-top:8px;">
+                            <div class="box_car_00">
+                                <div class="box_car_between">
+                                    <div class="fons22 roboto500">
+                                        HD-1500-00
+                                        <span class="uil uil-signal-alt fons17"></span>
+                                    </div>
+                                    <div class="fons22 roboto400">
+                                        50%
+                                    </div>
+                                </div>
+                                <div class="box_car_between">
+                                    <div class="ico_btn fons10">
+                                        <span class="dot_blue"></span>
+                                        <span>작업중</span>
+                                    </div>
+                                    <div class="fons10 gray70">
+                                        A-01로 이동중
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box_car_00">
+                                <div class="box_car_between">
+                                    <div class="fons22 roboto500">
+                                        HD-1500-00
+                                        <span class="uil uil-signal-alt fons17"></span>
+                                    </div>
+                                    <div class="fons22 roboto400">
+                                        17%
+                                    </div>
+                                </div>
+                                <div class="box_car_between">
+                                    <div class="ico_btn fons10">
+                                        <span class="dot_yello"></span>
+                                        <span>충전중</span>
+                                    </div>
+                                    <div class=" fons10 gray70">
+                                        A-01로 이동중
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box_car_between" style="margin:8px 0 12px;">
+                            <div class="box_car_00">
+                                <div class="box_car_between">
+                                    <div class="fons22 roboto500">
+                                        HD-1500-00
+                                        <span class="uil uil-signal-alt fons17"></span>
+                                    </div>
+                                    <div class="fons22 roboto400">
+                                        50%
+                                    </div>
+                                </div>
+                                <div class="box_car_between">
+                                    <div class="ico_btn fons10">
+                                        <span class="dot_blue"></span>
+                                        <span>작업중</span>
+                                    </div>
+                                    <div class="fons10 gray70">
+                                        A-01로 이동중
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box_car_00">
+                                <div class="box_car_between">
+                                    <div class="fons22 roboto500">
+                                        HD-1500-00
+                                        <span class="uil uil-signal-alt fons17"></span>
+                                    </div>
+                                    <div class="fons22 roboto400">
+                                        17%
+                                    </div>
+                                </div>
+                                <div class="box_car_between">
+                                    <div class="ico_btn fons10">
+                                        <span class="dot_yello"></span>
+                                        <span>충전중</span>
+                                    </div>
+                                    <div class=" fons10 gray70">
+                                        A-01로 이동중
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <!-- 임시 캡쳐 공간 -->
+                <!-- <canvas style="position: absolute; top:0; left: 0; z-index: 100; color: #fff; font-size: 50px;" class="capture">ㅇ</canvas> -->
+
+                <div class="card" style="width:50%;">
+                    <div class="card-body">
+                        <p class="notosans400 fons13">실시간 품질 검사</p>
+                        <div class="map_box" style="overflow: hidden;">
+                            
+                            <div id="capture" >
+                                <!-- <img src="http://192.168.137.248:8080/stream?topic=/csi_cam_0/image_raw"/> -->
+                                <img class="videoStream" muted playsinline autoplay src style="width:100%;" />
+                            </div>
+                            <canvas style="position: absolute; top:0; left: 0; z-index: 100;" class="capture"></canvas>
+                        
+                        </div>
+                        <div style="position: absolute; top:15px; right: 17px;">
+                            <button type="button" class="btn btn-sm btn-outline-secondary cap-btn" style="font-size: 10px;">캡쳐</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary dow-btn" style="font-size: 10px;">저장</button>
+                            
+                        </div>
+                        <p class="notosans400 fons13" style="margin:17px 0 14px;">이상 감지</p>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr style="border-top: 1px solid #eee;">
+                                <th scope="col">No</th>
+                                <th scope="col">First</th>
+                                <th scope="col">Last</th>
+                                <th scope="col">Handle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <th scope="row">1</th>
+                                <td>Mark</td>
+                                <td>Otto</td>
+                                <td>@mdo</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">2</th>
+                                <td>Jacob</td>
+                                <td>Thornton</td>
+                                <td>@fat</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">3</th>
+                                <td colspan="2">Larry the Bird</td>
+                                <td>@twitter</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">4</th>
+                                <td>Mark</td>
+                                <td>Otto</td>
+                                <td>@mdo</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">5</th>
+                                <td>Jacob</td>
+                                <td>Thornton</td>
+                                <td>@fat</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">6</th>
+                                <td colspan="2">Larry the Bird</td>
+                                <td>@twitter</td>
+                                </tr>
+                                <tr>
+                                <th scope="row">7</th>
+                                <td>Mark</td>
+                                <td>Otto</td>
+                                <td>@mdo</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="fons12 gray70" style="padding:10px 0 0 20px;">Copyrightⓒ 2024 class() All rights reserved.</div>
+
+        </div>
+    </div>
+{% endblock %}
