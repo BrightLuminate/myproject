@@ -1,124 +1,52 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인 - 스마트 AI 공장 제어 시스템</title>
-</head>
-<style>
-  
-body, html {
-    height: 100%;
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #1e1e1e; /* 어두운 회색 배경 */
-    color: #e0e0e0; /* 밝은 텍스트 색상 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+{% extends "base.html" %}
+{% block title %}SMART AI FACTORY{% endblock %}
+{% block content %}
+<div class="login">
+    <img src="static/img/005.png" alt="login image" class="login__img">
+
+    <form action="" class="login__form" method="post">
+    {% csrf_token %}
+    <h1 class="fons19 notosans500" style="text-align: center; margin-top: -14px; margin-bottom: 31px;">스마트 AI 팩토리</h1>
     
-}
+    <div class="login__content">
+        <div class="login__box">
+            <i class="ri-user-3-line login__icon"></i>
 
+            <div class="login__box-input">
+                <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150"  required class="login__input" required id="id_username" placeholder=" ">
+                <label for="id_username" class="login__label">아이디</label>
+            </div>
+        </div>
 
-.login-container {
-    background-color: #1e1e1e;
-    padding: 50px;
-    border-radius: 10px;
-    text-align: center;
-    width: 70%;
-    height: 70%;
-    max-width: 100%;
-    min-height: 200px;   /*고정 최소 높이 */
-    position: relative;
-    left: 400px;
-}
+        <div class="login__box">
+            <i class="ri-lock-2-line login__icon"></i>
 
-
-
-.login-container h1 {
-    margin-bottom: 20px;
-    font-size: 2.3em;
-    position: relative;
-    top: -60px;
-    left: 180px;
-}
-
-.login-form {
-    display: flex;
-    flex-direction: column;
-    font-size: 1.2em;
-    gap: 20px;
-    position: relative;
-    top: -50px;
-    left: 180px;
-}
-
-.login-form input[type="text"],
-.login-form input[type="password"] {
-    padding: 10px;
-    width: 60%;         /*30*/
-    border: none;
-    border-radius: 5px;
-    background-color: #444;
-    color: #e0e0e0;
-    font-size: 1em;
-
-}
-
-
-.btn {
-    padding: 12px;
-    width: 77%;   /* 37*/
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    position: relative;
-    left: 12%;
-    top: 10px;
-}
-
-.btn:hover {
-    background-color: #0056b3;
-}
-
-
-.error-message {
-    color: #ff4c4c;
-    margin-top: 10px;
-    font-size: 0.9em;
-}
-
-
-
-@media (max-width: 600px) {
-    .login-container {
-        padding: 20px;
-    }
-}
-
-</style>
-<body>
-    <div class="login-container" style="width: 600px">    <!--1415-->
-
-      
-        <h1><span style="color: #0052CC;">Smart AI</span><span style="color: #FF4713;"> Factory Control</span> <span style="color: #2D963D;"> System</span> </h1>
-        <img sur="myproject/myapp/static/rod.png">
-        <form method="post" class="login-form">
-            {% block content %}
-            <h2 >Login</h2>
-        
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Sign in</button>
-            {% if msg %}
-            <p class="error-message">{{ msg }}</p>
-            {% endif %}
-            {% endblock %}
-        </form>
+            <div class="login__box-input">
+                <input type="password" name="password" autocomplete="current-password"  required class="login__input" id="id_password" placeholder=" ">
+                <label for="id_password" class="login__label">패스워드</label>
+                <i class="ri-eye-off-line login__eye" id="login-eye"></i>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+
+    <div class="login__check">
+        <div class="login__check-group">
+            <!-- <input type="checkbox" class="login__check-input" id="login-check">
+            <label for="login-check" class="login__check-label">아이디 기억하기</label> -->
+        </div>
+
+        <a href="#" class="login__forgot">비밀번호를 잃어버렸다면?</a>
+    </div>
+
+
+    <button type="submit" class="login__button">로그인</button>
+    <!-- {% if msg %}
+        <p class="error-message">{{ msg }}</p>
+    {% endif %} -->
+    <p class="login__register">
+        <span style="font-size: 11px;">3조 </span>
+        class( <span style="font-size: 11px;">고세형. 박정흠. 이정은. 정민우. 최도현 </span>)
+    </p>
+    </form>
+</div>
+{% endblock %}
