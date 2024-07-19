@@ -139,9 +139,9 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='lqeypzafwverqymt')
 # DEFAULT_THROTTLE_CLASSES: 이 옵션은 요청 제한에 사용되는 기본 제한 클래스를 설정합니다. 클라이언트가 API에 요청을 할 수 있는 속도를 제한합니다.
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
@@ -177,7 +177,7 @@ TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = False  
+USE_TZ = True
 
 STATIC_URL = 'static/'
 
