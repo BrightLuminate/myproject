@@ -20,25 +20,7 @@ from dateutil import parser
 
 logger = logging.getLogger('django')
 
-def signup(request):
-    if request.user.is_authenticated:
-        return redirect('/')
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect('/')
-    else:
-        form = UserCreationForm()
-    return render(request, 'signup.html', {'form': form})
-
-def home(request):
-    return render(request, 'home.html')
-
+# 로그인 
 def signin(request):
     if request.user.is_authenticated:
         return render(request, 'home.html')
@@ -57,16 +39,7 @@ def signin(request):
 def profile(request):
     return render(request, 'profile.html')
 
-def signout(request):
-    logout(request)
-    return redirect('/')
-
-def email_view(request):
-    return render(request, 'email.html')
-
-def send_mail_view(request):
-    return render(request, 'email_format.html')
-
+# 이메일 
 def sendEmail(request):
     if request.method == 'POST':
         input_receiver = request.POST['inputReceiver']
@@ -91,6 +64,13 @@ def sendEmail(request):
 
 from django.views.decorators.csrf import csrf_exempt
 
+def email_view(request):
+    return render(request, 'email.html')
+
+def send_mail_view(request):
+    return render(request, 'email_format.html')
+    
+# 이메일 보내는것 
 @csrf_exempt
 def send_email(request):
     if request.method == 'POST':
@@ -116,39 +96,6 @@ logger = logging.getLogger('django')
 
 # Other view functions remain unchanged
 
-def upload_image(request):
-    if request.method == 'POST':
-        form = ImageUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            name = form.cleaned_data['name']  # Retrieve the name from the form
-            image_data = form.cleaned_data['image'].read()
-            image_instance = ImageModel(
-                name=name,
-                image=image_data
-            )
-            image_instance.save()
-            return redirect('image_success', image_id=image_instance.id)
-    else:
-        form = ImageUploadForm()
-    return render(request, 'upload.html', {'form': form})
-
-def image_success(request, image_id):
-    image_record = get_object_or_404(ImageModel, id=image_id)
-    if image_record and image_record.image:
-        image_data = base64.b64encode(image_record.image).decode('utf-8')
-    else:
-        image_data = None
-    return render(request, 'success.html', {'image_data': image_data, 'name': image_record.name})
-
-def show_image(request):
-    image_record = ImageModel.objects.first()  # 테스트를 위해 첫 번째 레코드 사용
-    print(image_record)
-    if image_record:
-        image_data = base64.b64encode(image_record.image).decode('utf-8')
-        return render(request, 'success.html', {'image_data': image_data, 'name': image_record.name})
-    else:
-        return render(request, 'success.html', {'image_data': None, 'name': None})
-    
 
 # mysql 이미지 한장 나오느방법
 
