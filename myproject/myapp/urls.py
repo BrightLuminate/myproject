@@ -1,5 +1,6 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from . import views 
+from .views import createTestDatas
 
 urlpatterns = [
     path('upload/', views.upload_image, name='upload_image'),
