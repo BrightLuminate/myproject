@@ -1,4 +1,5 @@
 from datetime import datetime, date, timedelta
+from calendar import monthrange
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
@@ -193,28 +194,26 @@ def getTestDate(request):
 
     return Response(serializer.data)
 
-# 오늘 날짜와 7일 전 날짜 계산 해주는 api
+# 오늘 날짜에서 주단위 읽어오는 api
 @api_view(['GET'])
 def getTestweek(request):
     today = datetime.now().date()
     start_date = today - timedelta(days=6)
-    datas = Images.objects.filter(Detection_Time__date__range=(start_date, today))    
+    datas = Images.objects.filter(Detection_Time__date__range=(start_date, today)) 
     serializer = TestDataSerializer(datas, many=True)
-
     return Response(serializer.data)
 
-# 오늘 날짜에서 월단위 해주는 api
+# 오늘 날짜에서 월단위 읽어오는 api
 @api_view(['GET'])
 def getTestmonth(request):
     today = datetime.now().date()
-    start_date = today - timedelta(days=30)
+    start_date = today - timedelta(days=31)
     datas = Images.objects.filter(Detection_Time__date__range=(start_date, today)) 
     serializer = TestDataSerializer(datas, many=True)
-
     return Response(serializer.data)
 
 
-# 오늘 날짜에서 연단위 해주는 api
+# 오늘 날짜에서 연단위 읽어오는 api
 @api_view(['GET'])
 def getTestyear(request):
     today = datetime.now().date()
