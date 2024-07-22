@@ -8,6 +8,11 @@ urlpatterns = [
     path('image_success/<int:image_id>/', views.image_success, name='image_success'),
     path('show_image/', views.show_image, name='show_image'),
     path('images/', views.image, name='images'),
+
+    # 기기제어, 품질검사, 로그기록 페이지
+    path('deviceState/', views.deviceState, name='deviceState'),
+    path('qualityInspect/', views.qualityInspect, name='qualityInspect'),
+    path('logRecord/', views.logRecord, name='logRecord'),
     
     # ko
     path('test01datas/<int:id>/', views.getTestDatas, name="test01datas"),
