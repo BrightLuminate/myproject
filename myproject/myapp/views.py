@@ -163,7 +163,15 @@ def image(request):
     else:
         return render(request, 'images.html', {'image_data_list': None})
 
+# 기기제어, 품질검사, 로그기록 페이지
+def deviceState(request) :
+    return render(request,'deviceState.html')
 
+def qualityInspect(request) :
+    return render(request,'qualityInspect.html')
+
+def logRecord(request) :
+    return render(request,'logRecord.html')
 
 # API 로직
 
