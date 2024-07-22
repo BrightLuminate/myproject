@@ -180,7 +180,7 @@ input:autofill:active {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 0 17px 11px 17px;
+    padding:15px 17px;
     color: #9d9d9d;
     border-bottom: 1px solid #373737;
     cursor: pointer;
@@ -194,7 +194,7 @@ input:autofill:active {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 0 17px 11px 17px;
+    padding:15px 17px;
     color: #fff;
     border-bottom: 1px solid #373737;
     cursor: pointer;
