@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<span class="fonts14 grayb7 top_box_center">
+    <span class="uil uil-bars fons19 ico"></span>
+    <span class="Poppin400">Smart AI Factory 관제 시스템</span>
+    <span>|</span>
+    <span id="title" class="whit notosans400">모니터링</span>
+</span>
+<div>
+    <span style="margin-right: 10px;">{{ user.username }} 님 ! </span>
+    <button type="button" class="btn btn-outline-dark" style="font-size: 10px;">메일</button>
+    {% if user.is_authenticated %}
+    <button type="button" class="btn btn-dark" style="font-size: 10px;" onclick="location.href='/signout'">로그아웃</button>
+    {% endif %} 
+</div>
+{% endblock %}
