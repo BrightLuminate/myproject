@@ -4,52 +4,10 @@
     <div class="navigation w-100 h-100">
         <div class="left h-100 d-inline-block">
             {% include "layout/menu.html" %}
-            <!-- <p class="txt01 notosans500" style="margin-bottom: 29px; pointer:pointer"><a href="/profile">스마트 AI 팩토리</a></p>
-            <div class="box_center">
-                <p class="face"><img src="\static\img\001.png" style="width: 100%;" /></p>
-                <p class="face_line posion_abso"></p>
-            </div>
-            <div class="gray70 fons11 txt_cen" style="padding-top: 20px;">김주임, 이사원</div>
-            <div class="flex_center" style="margin:10px 0 40px;">
-                <span class="uil uil-setting gray70 fons20 ico"></span>
-                <span class="uil uil-envelope gray70 fons20 ico"></span>
-                <a href="/signout"><span class="uil uil-power gray70 fons20 ico"></span></a>
-            </div>
-            <div>
-                <div class="fons15 menu_on" style="border-top: 1px solid #373737; padding-top: 13px;">
-                    <span>모니터링</span>
-                    <span class="uil uil-angle-right-b fons19"></span>
-                </div>
-                <div class="fons15 menu" style="padding-top: 13px;">
-                    <span>기기상태</span>
-                    <span class="uil uil-angle-right-b fons19"></span>
-                </div>
-                <div class="fons15 menu" style="padding-top: 13px;">
-                    <span>품질검사</span>
-                    <span class="uil uil-angle-right-b fons19"></span>
-                </div>
-                <div class="fons15 menu" style="padding-top: 13px;">
-                    <span>로그기록</span>
-                    <span class="uil uil-angle-right-b fons19"></span>
-                </div>
-            </div> -->
         </div>
-
         <div class="contain_box">
             <div class="top_box">
-                <span class="fonts14 grayb7 top_box_center">
-                    <span class="uil uil-bars fons19 ico"></span>
-                    <span class="Poppin400">Smart AI Factory 관제 시스템</span>
-                    <span>|</span>
-                    <span class="whit notosans400">모니터링</span>
-                </span>
-                <div>
-                    <span style="margin-right: 10px;">{{ user.username }} 님 ! </span>
-                    <button type="button" class="btn btn-outline-dark" style="font-size: 10px;">메일</button>
-                    {% if user.is_authenticated %}
-                    <button type="button" class="btn btn-dark" style="font-size: 10px;" onclick="location.href='/signout'">로그아웃</button>
-                    {% endif %} 
-                </div>
+                {% include "layout/title.html" %}
             </div>
             <div class="center_box_01_01 fons13 graycc">
                 <span>목표생산량 5,000 개</span>
@@ -344,7 +302,9 @@
 
         </div>
     </div>
+
+    
 <script>
-    setActiveMenu(0)
+    window.onload = function() { setActiveMenu(0) }
 </script>
 {% endblock %}
