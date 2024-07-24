@@ -67,8 +67,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 import os
 
-AWS_ACCESS_KEY_ID = os.getenv('AKIA2UC3AWOOPLLJY36R')
-AWS_SECRET_ACCESS_KEY = os.getenv('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')
+AWS_ACCESS_KEY_ID = os.getenv('AWS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = 'factorys'
 
 
@@ -79,11 +79,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         # 'NAME': config('DB_NAME', default='project'),
-        'NAME': config('DB_NAME', default='images_db'),
-        'USER': config('DB_USER', default='admin'),
-        'PASSWORD': config('DB_PASSWORD', default='12345678'),
-        'HOST': config('DB_HOST', default='ls-2fba5d616ed19fb5499c5ae6c43bf72bc772ca47.c9um400asul8.ap-northeast-2.rds.amazonaws.com'),
-        'PORT': config('DB_PORT', default='3306'),
+        'NAME': config('DB_NAME', default='DB_NAME'),
+        'USER': config('DB_USER', default='DB_USER'),
+        'PASSWORD': config('DB_PASSWORD', default='DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='DB_HOST'),
+        'PORT': config('DB_PORT', default='DB_PORT'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'"
         }
@@ -93,11 +93,11 @@ DATABASES = {
 # Testing the connection
 try:
     connection = pymysql.connect(
-        host=config('DB_HOST', default='ls-2fba5d616ed19fb5499c5ae6c43bf72bc772ca47.c9um400asul8.ap-northeast-2.rds.amazonaws.com'),
-        user=config('DB_USER', default='admin'),
-        password=config('DB_PASSWORD', default='12345678'),
-        database=config('DB_NAME', default='project'),
-        port=int(config('DB_PORT', default='3306'))
+        host=config('DB_HOST', default='DB_HOST'),
+        user=config('DB_USER', default='DB_USER'),
+        password=config('DB_PASSWORD', default='DB_PASSWORD'),
+        database=config('DB_NAME', default='DB_NAME'),
+        port=int(config('DB_PORT', default='DB_PORT'))
     )
     print("Connection successful")
 except pymysql.MySQLError as e:
@@ -127,8 +127,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='asdf71394@gmail.com')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='lqeypzafwverqymt')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 
 # DRF 설정 Django 앱 추가 
 # DEFAULT_RENDERER_CLASSES: 이 옵션은 콘텐츠 협상에 사용되는 기본 렌더러 클래스를 지정합니다. API 응답이 어떤 형식으로 직렬화될지를 결정합니다.
