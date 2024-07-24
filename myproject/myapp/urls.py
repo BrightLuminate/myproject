@@ -15,6 +15,15 @@ urlpatterns = [
     path('profile/qualityInspect/', views.qualityInspect, name='qualityInspect'),
     path('profile/logRecord/', views.logRecord, name='logRecord'),
     
+
+    # Test
+    
+    #  페이징
+    path('show_image/', views.show_image, name='show_image'),
+    #  스크롤
+    path('pos/', views.show_video, name='pos'),
+
+
     # get 
     path('test01datas/<int:id>/', views.getTestDatas, name="test01datas"),
     path('test01date/', views.getTestDate, name="test01date"),
