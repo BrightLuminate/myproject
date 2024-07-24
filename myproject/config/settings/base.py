@@ -69,7 +69,7 @@ import os
 
 AWS_ACCESS_KEY_ID = os.getenv('AWS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = 'factorys'
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_BUCKET_NAME')
 
 
 # MySQL 데이터베이스 설정
