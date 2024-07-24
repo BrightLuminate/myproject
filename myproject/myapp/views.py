@@ -173,7 +173,12 @@ def qualityInspect(request) :
 def logRecord(request) :
     return render(request,'logRecord.html')
 
-# API 로직
+# API 로직 테스트
+def show_image(request) :
+    return render(request,'show_image.html')
+
+def show_video(request) :
+    return render(request,'pos.html')
 
 # id 값을 받아서 read 해주는 api
 @api_view(['GET'])
