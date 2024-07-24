@@ -58,9 +58,9 @@ def signin(request):
 def profile(request):
     return render(request, 'profile.html')
 
-def signout(request):
-    logout(request)
-    return redirect('/')
+# def signout(request):
+#     logout(request)
+#     return redirect('/')
 
 def email_view(request):
     return render(request, 'email.html')
