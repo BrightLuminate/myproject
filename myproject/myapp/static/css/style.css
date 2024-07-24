@@ -209,6 +209,24 @@ input:autofill:active {
     cursor: pointer;
 }
 
+/* === Title  ==== */
+.w_30{
+    display:flex;
+    align-items:center;
+    width:30%;
+    gap:10px;
+}
+.d_j_start{
+    justify-content:start;
+}
+.d_j_center{
+    justify-content: center;
+}
+.d_j_end{
+    justify-content: end;
+}
+
+
 /* ============= CENTER ================= */
 /* ============= CENTER: TITLE ================= */
 
