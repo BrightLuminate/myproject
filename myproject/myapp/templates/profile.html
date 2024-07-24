@@ -10,9 +10,45 @@
                 {% include "layout/title.html" %}
             </div>
             <div class="center_box_01_01 fons13 graycc">
-                <span>목표생산량 5,000 개</span>
-                <span>현재 생산 5,000 개</span>
-                <span>불량률 5,000 개</span>
+                <div class="w_30 d_j_start">
+                    <span>목표 생산</span>
+                    <span id="counter" class="fons22 whit roboto500"></span>
+                    <span>개</span>
+                </div>
+                <div class="w_30 d_j_center">
+                    <span>현재 생산</span>
+                    <span class="fons22 whit roboto400">104900</span>
+                    <span>개</span>
+                    <span class="gray70">/</span>
+                    <span class="fons22 roboto300">98.5</span>
+                    <span >%</span>
+                </div>
+                <div class="w_30 d_j_end">
+                    <span>불량</span>
+                    <span class="fons22 whit roboto400">100</span>
+                    <span>개</span>
+                    <span class="gray70">/</span>
+                    <span class="fons22 roboto300">2.5</span>
+                    <span>%</span>
+                </div>
+                <!-- <div class="wow flipInX" data-wow-duration="2s" data-wow-delay="0.5s" data-wow-iteration="infinite">
+                    <div class="digit">
+                        <div class="flip-top">5</div>
+                        <div class="flip-bottom">5</div>
+                    </div>
+                    <div class="digit">
+                        <div class="flip-top">0</div>
+                        <div class="flip-bottom">0</div>
+                    </div>
+                    <div class="digit">
+                        <div class="flip-top">0</div>
+                        <div class="flip-bottom">0</div>
+                    </div>
+                    <div class="digit">
+                        <div class="flip-top">0</div>
+                        <div class="flip-bottom">0</div>
+                    </div>                 
+                </div>                 -->
             </div>
 
             <div class="center_box_01_02">
@@ -302,9 +338,34 @@
 
         </div>
     </div>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        var currentNumber = 0;
+        var interval = setInterval(() => {
+          document.getElementById('counter').textContent = currentNumber;
+          currentNumber += 100;
+          if (currentNumber > 105001) {
+            clearInterval(interval);
+          };
+        }, 1);
+      });
+      </script>
     
-<script>
-    window.onload = function() { setActiveMenu(0) }
-</script>
+<!-- <script>
+    window.onload = function() { setActiveMenu(0)
+
+        // flip-clock
+
+        const wow = new WOW(
+        {
+            boxClass:     'wow',      // default
+            animateClass: 'animated', // default
+            offset:       0,          // default
+            mobile:       true,       // default
+            live:         true        // default
+        }
+        )
+        wow.init();
+    }
+</script> -->
 {% endblock %}
