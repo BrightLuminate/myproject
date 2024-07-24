@@ -14,10 +14,10 @@ import numpy as np
 def mysql_connection():
     try:
         connection = pymysql.connect(
-            host='ls-2fba5d616ed19fb5499c5ae6c43bf72bc772ca47.c9um400asul8.ap-northeast-2.rds.amazonaws.com',
-            user='admin',
-            password='12345678',
-            database='images_db',
+            host=os.getenv('MYSQL_HOST'),
+            user=os.getenv('MYSQL_USER'),
+            password=os.getenv('MYSQL_PASSWORD'),
+            database=os.getenv('MYSQL_DATABASE'),
         )
         return connection
     except pymysql.MySQLError as e:
@@ -46,10 +46,10 @@ def insert_image_url_to_mysql(connection, image_name, image_url):
 def s3_connection():
     try:
         s3 = boto3.client(
-            service_name="s3",
-            region_name='us-east-2',
-            aws_access_key_id='AKIA2UC3AWOOPLLJY36R',
-            aws_secret_access_key='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',
+            service_name=os.getenv('AWS_SERVICE_NAME'),
+            region_name=os.getenv('AWS_REGION_NAME'),
+            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
         )
     except Exception as e:
         print(e)
