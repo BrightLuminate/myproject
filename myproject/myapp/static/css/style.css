@@ -81,7 +81,7 @@ input:autofill:active {
     /* background-color: #000,0.1; */
 }
 
-/* ============= Nav ================= */
+/* ============= Nav 1 ================= */
 .txt_cen{
     text-align: center;
 }
@@ -93,7 +93,7 @@ input:autofill:active {
     justify-content: center;
 }
 
-/* ============= Nav ================= */
+/* ============= Nav 2 ================= */
 .navigation{
     display: flex;
 }
@@ -124,6 +124,10 @@ input:autofill:active {
     justify-content: center;
     /* flex: 1 1 auto; */
 }
+.box_card_mw{
+    width: 50%;
+    min-width: 600px;
+}
 
 .box_car_between {
     display: flex;
@@ -135,6 +139,13 @@ input:autofill:active {
     border-radius: 10px;
     width: 49%;
     padding:13px 15px;
+    cursor: pointer;
+}
+.box_car_00:hover {
+    border: 1px solid #000000;
+    border-radius: 10px;
+    width: 49%;
+    padding:13px 15px;
 
 }
 
@@ -142,10 +153,44 @@ input:autofill:active {
     position: absolute;
 }
 
+/* ============= Min Width ================= */
+.min-w100{
+    min-width: 100px;
+}
+.min-w200{
+    min-width: 200px;
+}
+
+.min-w300{
+    min-width: 300px;
+}
+
+.min-w400{
+    min-width: 400px;
+}
+
+.min-w500{
+    min-width: 500px;
+}
+
+.min-w600{
+    min-width: 600px;
+}
+
+.min-w700{
+    min-width: 700px;
+}
+
+.min-w800{
+    min-width: 800px;
+}
+
+
 
 /* ============= Left Nav ================= */
 .left {
-    width: 220px;
+    width: 10%;
+    min-width:170px;
     background-color: #181918;
     padding-top: 38px;
     flex-shrink: 0;
@@ -175,12 +220,15 @@ input:autofill:active {
     border-radius: 50%;
 }
 
+/* .menu{
+    color: #7b33e1;
+} */
 .menu{
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding:15px 17px;
+    padding: 15px 17px;
     color: #9d9d9d;
     border-bottom: 1px solid #373737;
     cursor: pointer;
@@ -188,13 +236,15 @@ input:autofill:active {
 .menu:hover{
     color: #fff;
 }
-
+/* .menu_on{
+    color: #e80000;
+} */
 .menu_on{
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding:15px 17px;
+    padding: 15px 17px;
     color: #fff;
     border-bottom: 1px solid #373737;
     cursor: pointer;
@@ -208,7 +258,6 @@ input:autofill:active {
 .cursor{
     cursor: pointer;
 }
-
 /* === Title  ==== */
 .w_30{
     display:flex;
@@ -256,9 +305,13 @@ input:autofill:active {
 }
 .item01{
     flex:0 0 auto;
+    overflow: hidden; 
+    object-fit: cover;
 }
 .item02{
     flex-grow: 2;
+    overflow: hidden; 
+    object-fit: cover;
 }
 
 .map_box{
@@ -512,8 +565,60 @@ font-style: italic;
     vertical-align: middle;
 }
 
-
 /* ============= Effect Flip ================= */
+.flip-clock {
+    display: inline-block;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+
+}
+
+.digit {
+    display: inline-block;
+    width: 20px; /* 각 숫자의 너비 */
+    height: 24px; /* 숫자의 높이 */
+    line-height: 24px; /* 텍스트 세로 가운데 정렬 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    overflow: hidden; /* 넘치는 부분 숨기기 */
+    position: relative;
+    margin-right: 5px; /* 숫자 사이 간격 */
+    perspective: 100px; /* 3D 회전을 위한 원근법 */
+}
+
+.flip-top,
+.flip-bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background-color: #0c0c0c; /* 배경색 설정 */
+    padding: 5px 10px; /* 내부 여백 설정 */
+    border-radius: 3px; /* 모서리 둥글기 설정 */
+    box-shadow: 0 2px 5px rgba(245, 244, 244, 0.911); /* 그림자 설정 */
+    font-size: 20px; /* 폰트 크기 설정 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    transform-origin: center bottom;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+}
+
+.flip-bottom {
+    top: 50%;
+    transform-origin: center top;
+    transform: rotateX(180deg);
+}
+
+@keyframes flip {
+    from {
+        transform: rotateX(0);
+    }
+    to {
+        transform: rotateX(-180deg);
+    }
+}
+
+.flipping {
+    animation: flip 0.5s forwards;
+} 
 
 
 
@@ -533,12 +638,73 @@ font-style: italic;
     width: fit-content;
     padding: 0 5px;
 }
-.dot_blue{
+/* .dot_blue:hover{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #398bf7;
+    animation-duration:20s;
+    animation-fill-mode:none;
+    transform-box: fill-box;
+    transform-origin:center;
+} */
+
+/* .dot_blue{
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: #398bf7;
+    background-color: #B3C6D2;
+    transform-origin:center;
+} */
+
+.dot_blue {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #B3C6D2;
+    transition: width 0.3s, height 0.3s, background-color 0.3s; /* Smooth transition for size and color */
+    cursor: pointer; /* Show pointer cursor on hover */
+    position: relative; /* Ensure positioning context */
+    /* box-sizing: border-box; */
 }
+.dot_blue_on {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #398bf7;
+    transition: width 0.3s, height 0.3s, background-color 0.3s; /* Smooth transition for size and color */
+    cursor: pointer;
+    position: relative;
+}
+/* .dot_blue:focus {
+    width: 12px;
+    height: 12px;
+    background-color: #398bf7;
+    background-image: url('http://127.0.0.1:8000/static/img/location-point.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+} */
+
+/* .dot_blue:hover {
+    width: 12px;
+    height: 12px;
+    background-color: #398bf7;
+    animation: pulse 2s infinite alternate;
+    transform-origin: center;
+    position: relative;
+    
+}
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.2);
+    }
+} */
+
+
 
 .dot_yello{
     width: 8px;
@@ -562,19 +728,21 @@ font-style: italic;
 }
 
 
-.dot_ico_blue{
+/* .dot_ico_blue{
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background-color: #398bf7;
-}
+} */
 
-.dot_ico_glay{
+
+
+/* .dot_ico_glay{
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background-color: #6f6f6f;
-}
+} */
 
 /*=============== LOGIN ===============*/
 .login {
