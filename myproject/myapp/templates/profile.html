@@ -286,7 +286,7 @@
                 
                 <div class="card min-w600" style="width: 50%;">
                     <div class="card-body">
-                        <p class="notosans400 fons13">실시간 품질 검사</p>
+                        <p class="notosans400 fons13">품질 검사</p>
                         <div class="map_box" style="overflow: hidden;">
                             
                             <div id="capture">
@@ -301,18 +301,22 @@
                             <button type="button" class="btn btn-sm btn-outline-secondary dow-btn" style="font-size: 10px;">저장</button>
                             
                         </div> -->
-                        <p class="notosans400 fons13" style="margin:17px 0 14px;">이상 감지</p>
-                        <table class="table table-striped table-hover">
+                        <div class="notosans400 fons13 flex_between">
+                            <p style="margin:17px 0 14px;">품질 이상</p>
+                            <p style="margin:17px 0;" class="cursor"><a href="http://127.0.0.1:8000/profile/qualityInspect/">+ 더보기</a></p>
+                        </div>
+                        
+                        <table class="table table-striped table-hover fons14">
                             <thead>
                                 <tr style="border-top: 1px solid #eee;">
                                     <th scope="col">No</th>
-                                    <th scope="col">Detection_Time</th>
-                                    <th scope="col">Pull Measurement(MM/RPM)</th>
-                                    <th scope="col">coustomer</th>
-                                    <th scope="col">Photos</th>
+                                    <th scope="col">검출시간</th>
+                                    <th scope="col">품질측정(mm/RPM)</th>
+                                    <th scope="col">고객사</th>
+                                    <th scope="col">사진</th>
                                 </tr>
                             </thead>
-                            <tbody id="imageTable">
+                            <tbody id="imageTable" class="cursor">
                             </tbody>
                             <!-- <tbody>
                                 <tr>
@@ -359,7 +363,7 @@
         console.log(qr_val[0].textContent);
 
         })
-        
+
         // 페이징
         window.onload = function(){
             console.log("에러 없는걸로 호출")
