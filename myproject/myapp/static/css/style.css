@@ -8,6 +8,12 @@
 /* HTML : https://www.w3schools.com/tags/tag_aside.asp */
 /* STYLE: https://getbootstrap.kr/docs/5.3/components/buttons/ */
 
+/* @media screen and (min-width: 80rem) {
+    .container {
+      margin: 1em 2em;
+    }
+  } */
+
 :root {
     /*========== Colors ==========*/
     /*Color mode HSL(hue, saturation, lightness)*/
@@ -58,6 +64,7 @@ a {
   text-decoration: none;
 }
 
+
 /* ============= INPUT 자동완성 스타일 제거하는 방법 ================= */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -91,6 +98,13 @@ input:autofill:active {
     gap:10px;
     align-items: center;
     justify-content: center;
+}
+
+.flex_between{
+    display: flex;
+    /* gap:10px; */
+    align-items: center;
+    justify-content:space-between;
 }
 
 /* ============= Nav 2 ================= */
@@ -185,6 +199,14 @@ input:autofill:active {
     min-width: 800px;
 }
 
+.min-w900{
+    min-width: 900px;
+}
+
+.min-w1000{
+    min-width: 1000px;
+}
+
 
 
 /* ============= Left Nav ================= */
@@ -265,6 +287,17 @@ input:autofill:active {
     width:30%;
     gap:10px;
 }
+
+/* .d_flex{
+    display: flex;
+}
+.d_flex_a_center{
+    align-items: center;
+}
+.d_flex_j_sb{
+    justify-content: space-between;
+} */
+
 .d_j_start{
     justify-content:start;
 }
@@ -274,6 +307,7 @@ input:autofill:active {
 .d_j_end{
     justify-content: end;
 }
+
 
 
 /* ============= CENTER ================= */
@@ -288,6 +322,8 @@ input:autofill:active {
     padding: 15px 40px;
     margin: 15px 20px;
     border-radius: 5px;
+    /* width: 100%; */
+    /* min-width: 700px; */
 }
 
 .center_box_01_02{
@@ -725,6 +761,9 @@ font-style: italic;
     height: 8px;
     border-radius: 50%;
     background-color: #e80000;
+}
+.color_black{
+    color:#000;
 }
 
 
