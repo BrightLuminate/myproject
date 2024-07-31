@@ -12,102 +12,167 @@
         </div>
         <div class="center_box_02_01">
             <div class="item02" style="overflow: hidden;">
-                <div class="notosans400 fons13">HD-1500-00 실시간</div>
+                <div class="notosans400 fons13" style="display: flex; align-items: center; justify-content: space-between;">
+                  <div class="color_black">HD-1500-00 실시간</div>
+                  <div>
+                    <button type="button" class="btn btn-dark btn-sm notosans400" style="font-size: 11px;"  id="">주간</button>
+                    <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="">월간</button>
+                    <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="">년간</button>
+                  </div> 
+
+                </div>
                 <div class="map_box" style="padding: 10px 20px; display: flex; justify-content: center;">
                     <canvas id="myChart01" width="1150" height="270"></canvas>
                     <!-- <img src=".\img\005.png" style="height:100%;"/> -->
                 </div>
             </div>
             <div class="item01">
-                <div class="notosans400 fons13">기기 위치</div>
+                <div class="notosans400 fons13 color_black">품질 비율</div>
                 <div class="map_box" style="padding: 10px 70px">
                     <canvas id="myChart02" width="270" height="270"></canvas>
-                    <!-- <img src=".\img\map_long.png" style="height:100%;"/> -->
                 </div>
             </div>
         </div>
             <div class="card" style="margin: 0 20px;">
                 <div class="card-body">
-                    <p class="notosans400 fons13">작업현황</p>
+                    <p class="notosans400 fons13 color_black">작업현황</p>
                     <div class="navigation" style="justify-content: space-between;">
                         <div style="width: 75%;">
                             <table class="table table-striped table-hover">
                                 <thead>
                                   <tr style="border-top: 1px solid #eee;">
-                                    <th scope="col">#</th>
-                                    <th scope="col">First</th>
-                                    <th scope="col">Last</th>
-                                    <th scope="col">Handle</th>
+                                    <th scope="col">No</th>
+                                    <th scope="col">Detection_Time</th>
+                                    <th scope="col">Pull Measurement(MM/RPM)</th>
+                                    <th scope="col">coustomer</th>
+                                    <th scope="col">Photos</th>
                                   </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="imageTable">
+                                </tbody>
+                                <!-- <tbody>
                                   <tr>
                                     <th scope="row">1</th>
                                     <td>Mark</td>
                                     <td>Otto</td>
                                     <td>@mdo</td>
                                   </tr>
-                                  <tr>
-                                    <th scope="row">2</th>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>@fat</td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="row">3</th>
-                                    <td colspan="2">Larry the Bird</td>
-                                    <td>@twitter</td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="row">4</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="row">5</th>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>@fat</td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="row">6</th>
-                                    <td colspan="2">Larry the Bird</td>
-                                    <td>@twitter</td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="row">7</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="row">6</th>
-                                    <td colspan="2">Larry the Bird</td>
-                                    <td>@twitter</td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="row">7</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                  </tr>
-                                </tbody>
+                                </tbody> -->
                             </table>
+                            <div class="pagination" id="pagination">
+                              <a href="#" onclick="changePage('prev')">&laquo;</a>
+                              <a href="#" class="active" onclick="changePage(1)">1</a>
+                              <a href="#" onclick="changePage(2)">2</a>
+                              <a href="#" onclick="changePage(3)">3</a>
+                              <a href="#" onclick="changePage('next')">&raquo;</a>
+                            </div>
                         </div>
-                        <div style=" width: 394px; height: 410px; overflow: hidden; background-color: #eee; border-radius: 5px;">
-                            <img src=""/>
+                        <div id="imageTable" style=" width: 394px; height: 410px; overflow: hidden; background-color: #eee; border-radius: 5px;">
+                          <img id="displayedImage" src="" style="width: 100%; height: 100%;" />
                         </div>
                         
                     </div>
                     
                 </div>
             </div>
-        <div class="fons12 gray70" style="padding:10px 0 0 20px;">Copyrightⓒ 2024 class() All rights reserved.</div>
-
+            {% include "layout/foot.html" %}
     </div>
 </div>
 <script>
-    window.onload = function() { setActiveMenu(2) }
+  window.onload = function() { setActiveMenu(2) }
+</script>
+<script>
+  const rowsPerPage = 5;
+  let currentPage = 1;
+  let jsonData = [];
+
+  // window.onload = function() {
+  let xhr = new XMLHttpRequest();
+  let url = "http://127.0.0.1:8000/test01week";  // URL 수정
+
+  xhr.open("GET", url, true);
+  xhr.onload = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      jsonData = JSON.parse(xhr.response);
+      displayTable(jsonData, currentPage, rowsPerPage);
+      setupPagination(jsonData.length, rowsPerPage);
+      // 데이터가 있는 경우 첫 번째 이미지를 표시합니다.
+      if (jsonData.length > 0) {
+        displayImage(jsonData[0].image_url);
+      }
+    } else {
+      console.log("Error");
+    }
+  };
+  xhr.send();
+  // };
+
+  function displayTable(data, page, rows) {
+    const tableBody = document.getElementById('imageTable');
+    tableBody.innerHTML = "";
+    let start = (page - 1) * rows;
+    let end = start + rows;
+    let paginatedItems = data.slice(start, end);
+
+    for (let i = 0; i < paginatedItems.length; i++) {
+      let row = tableBody.insertRow();
+      row.insertCell(0).innerText = paginatedItems[i].id;
+      row.insertCell(1).innerText = paginatedItems[i].Detection_Time;
+      row.insertCell(2).innerText = paginatedItems[i].Pull_Measurement;
+      row.insertCell(3).innerText = paginatedItems[i].coustomer;
+      
+      let imgCell = row.insertCell(4);
+      let img = document.createElement('img');
+      img.src = paginatedItems[i].image_url;
+      img.width = 50;
+      imgCell.appendChild(img);
+      
+      // 각 행에 클릭 이벤트 추가
+      row.onclick = function() {
+        displayImage(paginatedItems[i].image_url);
+      };
+    }
+  }
+
+  function setupPagination(totalItems, rows) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = `
+      <a href="#" onclick="changePage('prev')">&laquo;</a>
+    `;
+    let pageCount = Math.ceil(totalItems / rows);
+    for (let i = 1; i <= pageCount; i++) {
+      pagination.innerHTML += `
+        <a href="#" ${i === currentPage ? 'class="active"' : ''} onclick="changePage(${i})">${i}</a>
+      `;
+    }
+    pagination.innerHTML += `
+      <a href="#" onclick="changePage('next')">&raquo;</a>
+    `;
+  }
+
+  function changePage(page) {
+    if (page === 'prev') {
+      if (currentPage > 1) {
+        currentPage--;
+      }
+    } else if (page === 'next') {
+      if (currentPage < Math.ceil(jsonData.length / rowsPerPage)) {
+        currentPage++;
+      }
+    } else {
+      currentPage = page;
+    }
+    displayTable(jsonData, currentPage, rowsPerPage);
+    setupPagination(jsonData.length, rowsPerPage);
+    // 새 페이지의 첫 번째 이미지 표시
+    if (jsonData.length > 0) {
+      displayImage(jsonData[(currentPage - 1) * rowsPerPage].image_url);
+    }
+  }
+
+  function displayImage(imageUrl) {
+    const displayedImage = document.getElementById('displayedImage');
+    displayedImage.src = imageUrl;
+  }
 </script>
 {% endblock %}
