@@ -357,6 +357,13 @@ input:autofill:active {
     height: 300px;
 }
 
+.cam_box{
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    height: 300px;
+}
+
 /* ============= Font Size ================= */
 .fons08 {
     font-size: 8px;
@@ -692,25 +699,35 @@ font-style: italic;
     background-color: #B3C6D2;
     transform-origin:center;
 } */
-
+.dot_sky {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #2854C5;
+    transition: width 0.3s, height 0.3s, background-color 0.3s; /* Smooth transition for size and color */
+    cursor: pointer; /* Show pointer cursor on hover */
+    position: relative; /* Ensure positioning context */
+    /* box-sizing: border-box; */
+}
 .dot_blue {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: #B3C6D2;
+    background-color: #AAC1F0;
     transition: width 0.3s, height 0.3s, background-color 0.3s; /* Smooth transition for size and color */
     cursor: pointer; /* Show pointer cursor on hover */
     position: relative; /* Ensure positioning context */
     /* box-sizing: border-box; */
 }
 .dot_blue_on {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background-color: #398bf7;
-    transition: width 0.3s, height 0.3s, background-color 0.3s; /* Smooth transition for size and color */
+    background-color: #2854C5;
+    transition: width 0.3s, height 0.3s, background-color 0.3s;
     cursor: pointer;
     position: relative;
+    /* animation: pulse 2s infinite alternate; */
 }
 /* .dot_blue:focus {
     width: 12px;
@@ -730,8 +747,8 @@ font-style: italic;
     transform-origin: center;
     position: relative;
     
-}
-@keyframes pulse {
+}*/
+/* @keyframes pulse {
     0% {
         transform: scale(1);
     }
