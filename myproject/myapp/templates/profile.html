@@ -336,71 +336,63 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/roslibjs/1.1.0/roslib.min.js" integrity="sha512-x2Owc9WayRcRj80Znkau58shVfXN2OIX+gQAlrx6KPugZBKrIC6AwgEWQQCI06p2Q8RB4ilxD+y+1BdNd+1fQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-        var currentNumber = 0;
-        var interval = setInterval(() => {
-          document.getElementById('counter').textContent = currentNumber;
-          currentNumber += 100;
-          if (currentNumber > 105001) {
-            clearInterval(interval);
-            };
-            }, 1); // 매 100밀리초(0.1초)마다 숫자를 증가시킴
-        });
-
-        /* JQUERY TEST */
-        let location_nav = document.querySelector(".map_box");
-        let location_on = location_nav.querySelectorAll(".dot_blue");
-        //   console.log(location_on);
-
-        let qr_select = document.querySelectorAll(".qr");
-        console.log(qr_select);
-
+    document.addEventListener('DOMContentLoaded', () => {
+        let xhr = new XMLHttpRequest(); 
+        let url = "http://127.0.0.1:8000//test01week";       
         
-        qr_val = document.querySelectorAll('.qr')
-        console.log(qr_val)
-        qr_val[0].addEventListener('change', () => {
-
-        console.log(qr_val[0].textContent);
-
-        })
-
-        // 페이징
-        window.onload = function(){
-            console.log("에러 없는걸로 호출")
-            let xhr = new XMLHttpRequest(); 
-            let url = "http://127.0.0.1:8000//test01week";       
-            
-            xhr.open("GET", url, true);
-            xhr.onload = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    let json = JSON.parse(xhr.response);
-                    let tableBody = document.getElementById('imageTable');
-                    console.log(JSON.parse(xhr.response))
-                    console.log(json.length)
-                    for (let i = 0; i < json.length; i++) {
-                        console.log(json[i].id);
-                        console.log(json[i].Detection_Time);
-                        console.log(json[i].image_url);
-                        // 생성 반복적으로 보여주는  
-                        let row = tableBody.insertRow();
-                        row.insertCell(0).innerText = json[i].id;
-                        row.insertCell(1).innerText = json[i].Detection_Time;
-                        row.insertCell(2).innerText = json[i].Pull_Measurement;
-                        row.insertCell(3).innerText = json[i].coustomer;  
-                        let imgCell = row.insertCell(4);
-                        let img = document.createElement('img');
-                        img.src = json[i].image_url;
-                        img.width = 50;
-                        imgCell.appendChild(img);
-                    }
+        xhr.open("GET", url, true);
+        xhr.onload = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                let json = JSON.parse(xhr.response);
+                let tableBody = document.getElementById('imageTable');
+                console.log(JSON.parse(xhr.response))
+                console.log(json.length)
+                for (let i = 0; i < json.length; i++) {
+                    console.log(json[i].id);
+                    console.log(json[i].Detection_Time);
+                    console.log(json[i].image_url);
+                    // 생성 반복적으로 보여주는  
+                    let row = tableBody.insertRow();
+                    row.insertCell(0).innerText = json[i].id;
+                    row.insertCell(1).innerText = json[i].Detection_Time;
+                    row.insertCell(2).innerText = json[i].Pull_Measurement;
+                    row.insertCell(3).innerText = json[i].coustomer;  
+                    let imgCell = row.insertCell(4);
+                    let img = document.createElement('img');
+                    img.src = json[i].image_url;
+                    img.width = 50;
+                    imgCell.appendChild(img);
                 }
-                else {
-                    console.log("Error");
-                }
-            };
-            xhr.send();
+            }
+            else {
+                console.log("Error");
+            }
         };
+        xhr.send();
+            var currentNumber = 0;
+            var interval = setInterval(() => {
+            document.getElementById('counter').textContent = currentNumber;
+            currentNumber += 100;
+            if (currentNumber > 105001) {
+                clearInterval(interval);
+                };
+            }, 1); // 매 100밀리초(0.1초)마다 숫자를 증가시킴
+    });
 
+    /* ROS Topic */
+    let location_nav = document.querySelector(".map_box");
+    let location_on = location_nav.querySelectorAll(".dot_blue");
+    let qr_select = document.querySelectorAll(".qr");
+    console.log(qr_select);
+
+    
+    qr_val = document.querySelectorAll('.qr')
+    console.log(qr_val)
+    qr_val[0].addEventListener('change', () => {
+
+    console.log(qr_val[0].textContent);
+
+    });
     //   if (qr_val == 1-1) {
     //     console.log('1-1 이 선택됐음');
     //     // document.getElementsByClassName('.test').innerHtml = 삐리리
@@ -438,9 +430,4 @@
         wow.init();
     }
 </script> -->
-
-<!--
-파란색 포인트 이미지
-<img class="a" style="position: relative; z-index: 300; width: 25px; top:-12px; left: 20px;" src="http://127.0.0.1:8000/static/img/location_on.svg"/>
--->
 {% endblock %}
