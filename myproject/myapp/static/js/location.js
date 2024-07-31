@@ -51,6 +51,12 @@ window.onload=function(){
         src="http://127.0.0.1:8000/static/img/location_on.svg"/>
         <i type="button" class="dot_blue_on"></i>
         `
+        const navPointer2 = `
+        <img class="a" 
+        style="position: absolute; z-index: 300; width: 25px; bottom:10px; left: -8.5px;"
+        src="http://127.0.0.1:8000/static/img/location_on.svg"/>
+        <i type="button" class="dot_blue_on"></i>
+        `
 
         let location_on = document.querySelectorAll(".map_box > div");
         console.log("location_on", location_on)
@@ -60,6 +66,17 @@ window.onload=function(){
                 item.innerHTML = navPointer
             }else{
                 item.innerHTML = `<i type="button" class="dot_blue"></i>`
+            }
+        })
+        
+        let location_on2 = document.querySelectorAll(".item02 > .map_box > div");
+        // console.log("location_on", location_on)
+
+        location_on2.forEach(function(item2){
+            if(item2.classList.contains(message.data.split(',')[1])){
+                item2.innerHTML = navPointer2
+            }else{
+                item2.innerHTML = `<i type="button" class="dot_blue"></i>`
             }
         })
  
