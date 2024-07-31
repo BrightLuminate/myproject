@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<p class="txt01 notosans500" style="margin-bottom: 29px; pointer:pointer"><a href="/profile" class="whit">스마트 AI 팩토리</a></p>
+<p class="txt01 notosans500 cursor" style="margin-bottom: 29px;"><a href="/profile" class="whit">스마트 AI 팩토리</a></p>
 <div class="box_center">
     <p class="face"><img src="\static\img\001.png" style="width: 100%;" /></p>
     <p class="face_line posion_abso"></p>
@@ -37,4 +37,21 @@
         </a>
     </div>
 </div>
+<!-- <script src="/static/css/menuSelect.js"></script> -->
+<script>
+function setActiveMenu(index){
+
+const menus = $('a.menu')
+$(menus[index]).removeClass("menu")
+$(menus[index]).addClass("menu_on")
+
+if (index === 0) {
+    $("#title").text("모니터링");
+    } else if (index === 1) {
+    $("#title").text("기기상태");
+    } else if (index === 2) {
+    $("#title").text("품질관리");
+    }
+}
+</script>
 {% endblock %}
