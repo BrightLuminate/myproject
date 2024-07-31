@@ -280,6 +280,9 @@ input:autofill:active {
 .cursor{
     cursor: pointer;
 }
+.effect:hover{
+    background-color:#ffff55
+}
 /* === Title  ==== */
 .w_30{
     display:flex;
