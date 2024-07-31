@@ -1,5 +1,20 @@
 {% extends "base.html" %}
 {% block title %}SMART AI FACTORY{% endblock %}
 {% block content %}
-<p>로그기록 있는 부분임</p>
+<div class="navigation w-100 h-100">
+    <div class="left h-100 d-inline-block">
+        {% include "layout/menu.html" %}
+    </div>
+    <div class="contain_box">
+        <div class="top_box">
+            {% include "layout/title.html" %}
+        </div>
+        <div class="center_box_02_01">
+            로그기록
+        </div>
+    </div>
+</div>
+<script>
+    setActiveMenu(3)//페이지 넘버링
+</script>
 {% endblock %}
