@@ -1,240 +1,193 @@
-import logging
-import boto3
-import pymysql
-from datetime import datetime
-import pytz
-import os
-import mimetypes
-import cv2
-import numpy as np
-import roslibpy
-from dotenv import load_dotenv
+{% extends "base.html" %}
+{% block title %}SMART AI FACTORY{% endblock %}
+{% block content %}
+<div class="navigation w-100 h-100">
+    <div class="left h-100 d-inline-block">
+        {% include "layout/menu.html" %}
+    </div>
 
-# 환경 변수 로드
-load_dotenv()
+    <div class="contain_box">
+        <div class="top_box">
+            {% include "layout/title.html" %}
+        </div>
+        <div class="center_box_02_01">
+            <div class="item02" style="overflow: hidden;">
+                <div class="notosans400 fons13" style="display: flex; align-items: center; justify-content: space-between;">
+                  <div class="color_black">HD-1500-00 실시간</div>
+                  <div>
+                    <button type="button" class="btn btn-dark btn-sm notosans400" style="font-size: 11px;"  id="">주간</button>
+                    <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="">월간</button>
+                    <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="">년간</button>
+                  </div> 
 
-# 로깅 설정
-logging.basicConfig(level=logging.INFO)
+                </div>
+                <div class="map_box" style="padding: 10px 20px; display: flex; justify-content: center;">
+                    <canvas id="myChart01" width="1150" height="270"></canvas>
+                    <!-- <img src=".\img\005.png" style="height:100%;"/> -->
+                </div>
+            </div>
+            <div class="item01">
+                <div class="notosans400 fons13 color_black">품질 비율</div>
+                <div class="map_box" style="padding: 10px 70px">
+                    <canvas id="myChart02" width="270" height="270"></canvas>
+                </div>
+            </div>
+        </div>
+            <div class="card" style="margin: 0 20px;">
+                <div class="card-body">
+                    <p class="notosans400 fons13 color_black">작업현황</p>
+                    <div class="navigation" style="justify-content: space-between;">
+                        <div style="width: 75%;">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                  <tr style="border-top: 1px solid #eee;">
+                                    <th scope="col">No</th>
+                                    <th scope="col">Detection_Time</th>
+                                    <th scope="col">Pull Measurement(MM/RPM)</th>
+                                    <th scope="col">coustomer</th>
+                                    <th scope="col">Photos</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="imageTable">
+                                </tbody>
+                                <!-- <tbody>
+                                  <tr>
+                                    <th scope="row">1</th>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                    <td>@mdo</td>
+                                  </tr>
+                                </tbody> -->
+                            </table>
+                            <div class="pagination" id="pagination">
+                              <a href="#" onclick="changePage('prev')">&laquo;</a>
+                              <a href="#" class="active" onclick="changePage(1)">1</a>
+                              <a href="#" onclick="changePage(2)">2</a>
+                              <a href="#" onclick="changePage(3)">3</a>
+                              <a href="#" onclick="changePage('next')">&raquo;</a>
+                            </div>
+                        </div>
+                        <div id="imageTable" style=" width: 394px; height: 410px; overflow: hidden; background-color: #eee; border-radius: 5px;">
+                          <img id="displayedImage" src="" style="width: 100%; height: 100%;" />
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            {% include "layout/foot.html" %}
+    </div>
+</div>
+<script>
+  setActiveMenu(2)
+  // URL에서 쿼리 문자열을 가져옴
+  const queryStr = window.location.search  
+  const params = new URLSearchParams(queryStr)  
+  const imageUrl = params.get("img");
+  displayImage(imageUrl);
 
-# MySQL 연결 기능
-def mysql_connection():
-    try:
-        connection = pymysql.connect(
-            host=os.getenv('MYSQL_HOST', 'localhost'),
-            user=os.getenv('MYSQL_USER', 'root'),
-            password=os.getenv('MYSQL_PASSWORD', ''),
-            database=os.getenv('MYSQL_DATABASE', 'mydatabase'),
-        )
-        logging.info("MySQL connection successful")
-        return connection
-    except pymysql.MySQLError as e:
-        logging.error(f"Error connecting to MySQL: {e}")
-        return None
+  if (imageUrl) {
+    console.log("Image URL: ", imageUrl);
 
-# 현재 한국 시간 가져오기
-def get_kst_time():
-    kst = pytz.timezone('Asia/Seoul')
-    kst_time = datetime.now(kst)
-    return kst_time.strftime('%Y-%m-%d %H:%M:%S')
+    let img = document.createElement('img');
+    img.src = imageUrl;
+  } else {
+    console.log("No Image URL found.");
+  }
 
-# MySQL에 이미지 URL 삽입
-def insert_image_url_to_mysql(connection, image_name, image_url):
-    try:
-        with connection.cursor() as cursor:
-            detection_time = get_kst_time()
-            sql = "INSERT INTO myapp_images (image_name, image_url, detection_time) VALUES (%s, %s, %s)"
-            cursor.execute(sql, (image_name, image_url, detection_time))
-        connection.commit()
-        logging.info("Image URL inserted successfully")
-    except pymysql.MySQLError as e:
-        logging.error(f"Error inserting URL to MySQL: {e}")
 
-# S3 연결 기능
-def s3_connection():
-    try:
-        s3 = boto3.client(
-            service_name='s3',
-            region_name=os.getenv('AWS_REGION_NAME', 'us-west-1'),
-            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-        )
-        logging.info("S3 bucket connected!")
-        return s3
-    except Exception as e:
-        logging.error(f"Error connecting to S3: {e}")
-        return None
 
-# S3에 파일 업로드 및 URL 가져오기
-def upload_file_to_s3_and_get_url(s3, file_name, bucket_name, object_name):
-    try:
-        content_type, _ = mimetypes.guess_type(file_name)
-        content_type = content_type or 'binary/octet-stream'
+  const rowsPerPage = 5;
+  let currentPage = 1;
+  let jsonData = [];
 
-        with open(file_name, 'rb') as file:
-            s3.upload_fileobj(
-                file,
-                bucket_name,
-                object_name,
-                ExtraArgs={'ContentType': content_type}
-            )
-        logging.info("File uploaded successfully")
-        s3_url = f"https://{bucket_name}.s3.amazonaws.com/{object_name}"
-        return s3_url
-    except Exception as e:
-        logging.error(f"Error uploading file to S3: {e}")
-        return None
+  // window.onload = function() {
+  let xhr = new XMLHttpRequest();
+  let url = "http://127.0.0.1:8000/test01week";  // URL 수정
 
-# YOLO 모델 로딩 기능
-def load_yolo_model(cfg_path, weights_path, names_path):
-    try:
-        net = cv2.dnn.readNet(weights_path, cfg_path)
-        layer_names = net.getLayerNames()
-        output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
+  xhr.open("GET", url, true);
+  xhr.onload = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      jsonData = JSON.parse(xhr.response);
+      displayTable(jsonData, currentPage, rowsPerPage);
+      setupPagination(jsonData.length, rowsPerPage);
+      // 데이터가 있는 경우 첫 번째 이미지를 표시합니다.
+      if (jsonData.length > 0) {
+        displayImage(jsonData[0].image_url);
+      }
+    } else {
+      console.log("Error");
+    }
+  };
+  xhr.send();
+  // };
 
-        with open(names_path, "r") as f:
-            classes = [line.strip() for line in f.readlines()]
+  function displayTable(data, page, rows) {
+    const tableBody = document.getElementById('imageTable');
+    tableBody.innerHTML = "";
+    let start = (page - 1) * rows;
+    let end = start + rows;
+    let paginatedItems = data.slice(start, end);
 
-        logging.info("YOLO model loaded successfully")
-        return net, classes, output_layers
-    except Exception as e:
-        logging.error(f"Error loading YOLO model: {e}")
-        return None, None, None
+    for (let i = 0; i < paginatedItems.length; i++) {
+      let row = tableBody.insertRow();
+      row.insertCell(0).innerText = paginatedItems[i].id;
+      row.insertCell(1).innerText = paginatedItems[i].Detection_Time;
+      row.insertCell(2).innerText = paginatedItems[i].Pull_Measurement;
+      row.insertCell(3).innerText = paginatedItems[i].coustomer;
+      
+      let imgCell = row.insertCell(4);
+      let img = document.createElement('img');
+      img.src = paginatedItems[i].image_url;
+      img.width = 50;
+      imgCell.appendChild(img);
+      
+      // 각 행에 클릭 이벤트 추가
+      row.onclick = function() {
+        displayImage(paginatedItems[i].image_url);
+      };
+    }
+  }
 
-# 물체 감지 및 이미지 저장
-def detect_and_save_image(net, output_layers, frame, classes):
-    try:
-        height, width, channels = frame.shape
+  function setupPagination(totalItems, rows) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = `
+      <a href="#" onclick="changePage('prev')">&laquo;</a>
+    `;
+    let pageCount = Math.ceil(totalItems / rows);
+    for (let i = 1; i <= pageCount; i++) {
+      pagination.innerHTML += `
+        <a href="#" ${i === currentPage ? 'class="active"' : ''} onclick="changePage(${i})">${i}</a>
+      `;
+    }
+    pagination.innerHTML += `
+      <a href="#" onclick="changePage('next')">&raquo;</a>
+    `;
+  }
 
-        blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-        net.setInput(blob)
-        outs = net.forward(output_layers)
+  function changePage(page) {
+    if (page === 'prev') {
+      if (currentPage > 1) {
+        currentPage--;
+      }
+    } else if (page === 'next') {
+      if (currentPage < Math.ceil(jsonData.length / rowsPerPage)) {
+        currentPage++;
+      }
+    } else {
+      currentPage = page;
+    }
+    displayTable(jsonData, currentPage, rowsPerPage);
+    setupPagination(jsonData.length, rowsPerPage);
+    // 새 페이지의 첫 번째 이미지 표시
+    if (jsonData.length > 0) {
+      displayImage(jsonData[(currentPage - 1) * rowsPerPage].image_url);
+    }
+  }
 
-        class_ids = []
-        confidences = []
-        boxes = []
-
-        for out in outs:
-            for detection in out:
-                scores = detection[5:]
-                class_id = np.argmax(scores)
-                confidence = scores[class_id]
-                if confidence > 0.5:
-                    center_x = int(detection[0] * width)
-                    center_y = int(detection[1] * height)
-                    w = int(detection[2] * width)
-                    h = int(detection[3] * height)
-
-                    x = int(center_x - w / 2)
-                    y = int(center_y - h / 2)
-
-                    boxes.append([x, y, w, h])
-                    confidences.append(float(confidence))
-                    class_ids.append(class_id)
-
-        indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
-        detected_objects = [classes[class_ids[i]] for i in indexes.flatten()]
-
-        if len(indexes) == 0 or len(detected_objects) == 0:
-            logging.info("No relevant objects detected.")
-            return None
-
-        for i in range(len(boxes)):
-            if i in indexes:
-                x, y, w, h = boxes[i]
-                label = str(classes[class_ids[i]])
-                color = (0, 255, 0)
-                cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
-                cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, color, 2)
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        image_name = f"detected_{timestamp}.jpg"
-        cv2.imwrite(image_name, frame)
-        logging.info(f"Image saved: {image_name}")
-        return image_name
-
-    except Exception as e:
-        logging.error(f"Error detecting objects: {e}")
-        return None
-
-# ROS 설정 및 메인 루프
-ros_host = os.getenv('ROS_HOST', 'localhost')
-ros_port = int(os.getenv('ROS_PORT', 9090))
-
-client = roslibpy.Ros(host=ros_host, port=ros_port)
-client.run()
-subscriber = roslibpy.Topic(client, '/qr', 'std_msgs/String')
-
-# QR코드 추적 및 상태 캡처
-last_location = None
-capture_requested = False
-
-def location_objecting(message):
-    global last_location, capture_requested
-    data_ = message['data'].split(',')
-    location = data_[1]
-
-    if location != last_location:
-        last_location = location
-        capture_requested = True
-        logging.info(f"Location updated to: {location}")
-
-def capture_and_process_image(frame):
-    cfg_path = "./yolov3-tiny.cfg"
-    weights_path = "./yolov3-tiny.weights"
-    names_path = "./label.names"
-
-    if not os.path.isfile(cfg_path) or not os.path.isfile(weights_path) or not os.path.isfile(names_path):
-        logging.error("Error: YOLO configuration or weight files not found.")
-        return
-
-    net, classes, output_layers = load_yolo_model(cfg_path, weights_path, names_path)
-    if net is None or classes is None or output_layers is None:
-        return
-
-    detected_image = detect_and_save_image(net, output_layers, frame, classes)
-    if detected_image:
-        s3 = s3_connection()
-        if s3:
-            s3_url = upload_file_to_s3_and_get_url(s3, detected_image, "factorys", detected_image)
-            if s3_url:
-                connection = mysql_connection()
-                if connection:
-                    insert_image_url_to_mysql(connection, detected_image, s3_url)
-                    connection.close()
-            os.remove(detected_image)
-
-if __name__ == "__main__":
-    subscriber.subscribe(location_objecting)
-    cap = cv2.VideoCapture(0)
-
-    if not cap.isOpened():
-        logging.error("Error: Could not open video capture device.")
-        exit()
-
-    try:
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                logging.error("Error: Could not read frame from video capture device.")
-                break
-
-            cv2.imshow('Webcam Feed', frame)
-
-            if capture_requested and last_location == "2-1":
-                # 최근에 처리하지 않은 이미지만 처리합니다.
-                capture_and_process_image(frame)
-                # 중복 캡처를 방지하기 위해 캡처_요청됨을 재설정합니다.
-                capture_requested = False
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-    except KeyboardInterrupt:
-        logging.info("Interrupted")
-
-    finally:
-        subscriber.unsubscribe()
-        client.terminate()
-        cap.release()
-        cv2.destroyAllWindows()
-        logging.info("Terminated ROS client connection.")
+  function displayImage(imageUrl) {
+    const displayedImage = document.getElementById('displayedImage');
+    displayedImage.src = imageUrl;
+  }
+</script>
+{% endblock %}
