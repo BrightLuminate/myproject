@@ -188,6 +188,10 @@ input:autofill:active {
     min-width: 500px;
 }
 
+.min-w546{
+    min-width: 546px;
+}
+
 .min-w600{
     min-width: 600px;
 }
@@ -291,6 +295,7 @@ input:autofill:active {
     width:30%;
     gap:10px;
 }
+
 
 /* .d_flex{
     display: flex;
