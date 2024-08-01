@@ -79,9 +79,25 @@
     </div>
 </div>
 <script>
-  window.onload = function() { setActiveMenu(2) }
-</script>
-<script>
+  setActiveMenu(2)
+  // URL에서 쿼리 문자열을 가져옴
+  const queryStr = window.location.search  
+  const params = new URLSearchParams(queryStr)  
+  const imageUrl = params.get("img");
+  displayImage(imageUrl);
+
+  if (imageUrl) {
+    console.log("Image URL: ", imageUrl);
+
+    let img = document.createElement('img');
+    img.src = imageUrl;
+  } else {
+    console.log("No Image URL found.");
+  }
+  
+
+  // alert(viewId)
+
   const rowsPerPage = 5;
   let currentPage = 1;
   let jsonData = [];
@@ -97,9 +113,9 @@
       displayTable(jsonData, currentPage, rowsPerPage);
       setupPagination(jsonData.length, rowsPerPage);
       // 데이터가 있는 경우 첫 번째 이미지를 표시합니다.
-      if (jsonData.length > 0) {
-        displayImage(jsonData[0].image_url);
-      }
+      // if (jsonData.length > 0) {
+      //   displayImage(jsonData[0].image_url);
+      // }
     } else {
       console.log("Error");
     }
