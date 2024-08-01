@@ -1,3 +1,4 @@
+import logging
 import boto3
 import pymysql
 from datetime import datetime
@@ -6,215 +7,229 @@ import os
 import mimetypes
 import cv2
 import numpy as np
+import roslibpy
+from dotenv import load_dotenv
 
+# 환경 변수 로드
+load_dotenv()
 
-# 웹캠으로 S3 로 저장 mysql 저장 하는방법 
+# 로깅 설정
+logging.basicConfig(level=logging.INFO)
 
-# MySQL 연결 함수
+# MySQL 연결 기능
 def mysql_connection():
     try:
         connection = pymysql.connect(
-            host=os.getenv('MYSQL_HOST'),
-            user=os.getenv('MYSQL_USER'),
-            password=os.getenv('MYSQL_PASSWORD'),
-            database=os.getenv('MYSQL_DATABASE'),
+            host=os.getenv('MYSQL_HOST', 'localhost'),
+            user=os.getenv('MYSQL_USER', 'root'),
+            password=os.getenv('MYSQL_PASSWORD', ''),
+            database=os.getenv('MYSQL_DATABASE', 'mydatabase'),
         )
+        logging.info("MySQL connection successful")
         return connection
     except pymysql.MySQLError as e:
-        print(f"Error connecting to MySQL: {e}")
+        logging.error(f"Error connecting to MySQL: {e}")
         return None
 
-# 한국 시간대를 고려하여 현재 시간을 반환하는 함수
+# 현재 한국 시간 가져오기
 def get_kst_time():
     kst = pytz.timezone('Asia/Seoul')
     kst_time = datetime.now(kst)
     return kst_time.strftime('%Y-%m-%d %H:%M:%S')
 
-# 이미지 URL을 MySQL에 삽입하는 함수
+# MySQL에 이미지 URL 삽입
 def insert_image_url_to_mysql(connection, image_name, image_url):
     try:
         with connection.cursor() as cursor:
             detection_time = get_kst_time()
-            sql = "INSERT INTO myapp_images (image_name, image_url, Detection_Time) VALUES (%s, %s, %s)"
+            sql = "INSERT INTO myapp_images (image_name, image_url, detection_time) VALUES (%s, %s, %s)"
             cursor.execute(sql, (image_name, image_url, detection_time))
         connection.commit()
-        print("Image URL inserted successfully")
+        logging.info("Image URL inserted successfully")
     except pymysql.MySQLError as e:
-        print(f"Error inserting URL to MySQL: {e}")
+        logging.error(f"Error inserting URL to MySQL: {e}")
 
-# S3 연결 함수
+# S3 연결 기능
 def s3_connection():
     try:
         s3 = boto3.client(
-            service_name=os.getenv('AWS_SERVICE_NAME'),
-            region_name=os.getenv('AWS_REGION_NAME'),
+            service_name='s3',
+            region_name=os.getenv('AWS_REGION_NAME', 'us-west-1'),
             aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
         )
-    except Exception as e:
-        print(e)
-        return None
-    else:
-        print("s3 bucket connected!")
+        logging.info("S3 bucket connected!")
         return s3
+    except Exception as e:
+        logging.error(f"Error connecting to S3: {e}")
+        return None
 
-# 파일을 S3에 업로드하고 URL을 반환하는 함수
+# S3에 파일 업로드 및 URL 가져오기
 def upload_file_to_s3_and_get_url(s3, file_name, bucket_name, object_name):
     try:
-        content_type, _ = mimetypes.guess_type(file_name)  # 파일의 MIME 타입 추정
-        if content_type is None:
-            content_type = 'binary/octet-stream'  # 기본값
+        content_type, _ = mimetypes.guess_type(file_name)
+        content_type = content_type or 'binary/octet-stream'
 
         with open(file_name, 'rb') as file:
             s3.upload_fileobj(
                 file,
                 bucket_name,
                 object_name,
-                ExtraArgs={'ContentType': content_type}  # 적절한 Content-Type 설정
+                ExtraArgs={'ContentType': content_type}
             )
-        print("File uploaded successfully")
+        logging.info("File uploaded successfully")
         s3_url = f"https://{bucket_name}.s3.amazonaws.com/{object_name}"
         return s3_url
     except Exception as e:
-        print(e)
+        logging.error(f"Error uploading file to S3: {e}")
         return None
 
-# MySQL에서 데이터를 조회하는 함수
-def fetch_images_from_mysql(connection):
-    try:
-        with connection.cursor() as cursor:
-            sql = "SELECT * FROM myapp_images"
-            cursor.execute(sql)
-            results = cursor.fetchall()
-            for row in results:
-                print(row)
-    except pymysql.MySQLError as e:
-        print(f"Error fetching data from MySQL: {e}")
-
-# YOLO 모델을 로드하는 함수
+# YOLO 모델 로딩 기능
 def load_yolo_model(cfg_path, weights_path, names_path):
-    net = cv2.dnn.readNet(weights_path, cfg_path)
-    layer_names = net.getLayerNames()
-    output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
+    try:
+        net = cv2.dnn.readNet(weights_path, cfg_path)
+        layer_names = net.getLayerNames()
+        output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
 
-    with open(names_path, "r") as f:
-        classes = [line.strip() for line in f.readlines()]
+        with open(names_path, "r") as f:
+            classes = [line.strip() for line in f.readlines()]
 
-    return net, classes, output_layers
+        logging.info("YOLO model loaded successfully")
+        return net, classes, output_layers
+    except Exception as e:
+        logging.error(f"Error loading YOLO model: {e}")
+        return None, None, None
 
-# 객체를 감지하고 이미지 저장하는 함수
+# 물체 감지 및 이미지 저장
 def detect_and_save_image(net, output_layers, frame, classes):
-    height, width, channels = frame.shape
+    try:
+        height, width, channels = frame.shape
 
-    blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-    net.setInput(blob)
-    outs = net.forward(output_layers)
+        blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+        net.setInput(blob)
+        outs = net.forward(output_layers)
 
-    class_ids = []
-    confidences = []
-    boxes = []
+        class_ids = []
+        confidences = []
+        boxes = []
 
-    for out in outs:
-        for detection in out:
-            scores = detection[5:]
-            class_id = np.argmax(scores)
-            confidence = scores[class_id]
-            if confidence > 0.5:
-                center_x = int(detection[0] * width)
-                center_y = int(detection[1] * height)
-                w = int(detection[2] * width)
-                h = int(detection[3] * height)
+        for out in outs:
+            for detection in out:
+                scores = detection[5:]
+                class_id = np.argmax(scores)
+                confidence = scores[class_id]
+                if confidence > 0.5:
+                    center_x = int(detection[0] * width)
+                    center_y = int(detection[1] * height)
+                    w = int(detection[2] * width)
+                    h = int(detection[3] * height)
 
-                x = int(center_x - w / 2)
-                y = int(center_y - h / 2)
+                    x = int(center_x - w / 2)
+                    y = int(center_y - h / 2)
 
-                boxes.append([x, y, w, h])
-                confidences.append(float(confidence))
-                class_ids.append(class_id)
+                    boxes.append([x, y, w, h])
+                    confidences.append(float(confidence))
+                    class_ids.append(class_id)
 
-    indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+        indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
 
-    
-        
+        for i in range(len(boxes)):
+            if i in indexes:
+                x, y, w, h = boxes[i]
+                label = str(classes[class_ids[i]])
+                color = (0, 255, 0)
+                cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, color, 2)
 
-    for i in range(len(boxes)):
-        if i in indexes:
-            x, y, w, h = boxes[i]
-            label = str(classes[class_ids[i]])
-            color = (0, 255, 0)
-            cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
-            cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, color, 2)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        image_name = f"detected_{timestamp}.jpg"
+        cv2.imwrite(image_name, frame)
+        logging.info(f"Image saved: {image_name}")
+        return image_name
 
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            image_name = f"detected_{timestamp}.jpg"
-            cv2.imwrite(image_name, frame)
-            return image_name
+    except Exception as e:
+        logging.error(f"Error detecting objects: {e}")
+        return None
 
-    return None
+# ROS 설정 및 메인 루프
+ros_host = os.getenv('ROS_HOST', 'localhost')
+ros_port = int(os.getenv('ROS_PORT', 9090))
 
+client = roslibpy.Ros(host=ros_host, port=ros_port)
+client.run()
+subscriber = roslibpy.Topic(client, '/qr', 'std_msgs/String')
+
+# QR코드 추적 및 상태 캡처
+last_location = None
+capture_requested = False
+
+def location_objecting(message):
+    global last_location, capture_requested
+    data_ = message['data'].split(',')
+    location = data_[1]
+
+    if location != last_location:
+        last_location = location
+        capture_requested = True
+        logging.info(f"Location updated to: {location}")
+
+def capture_and_process_image(frame):
+    cfg_path = "./yolov3-tiny.cfg"
+    weights_path = "./yolov3-tiny.weights"
+    names_path = "./label.names"
+
+    if not os.path.isfile(cfg_path) or not os.path.isfile(weights_path) or not os.path.isfile(names_path):
+        logging.error("Error: YOLO configuration or weight files not found.")
+        return
+
+    net, classes, output_layers = load_yolo_model(cfg_path, weights_path, names_path)
+    if net is None or classes is None or output_layers is None:
+        return
+
+    detected_image = detect_and_save_image(net, output_layers, frame, classes)
+    if detected_image:
+        s3 = s3_connection()
+        if s3:
+            s3_url = upload_file_to_s3_and_get_url(s3, detected_image, "factorys", detected_image)
+            if s3_url:
+                connection = mysql_connection()
+                if connection:
+                    insert_image_url_to_mysql(connection, detected_image, s3_url)
+                    connection.close()
+            os.remove(detected_image)
 
 if __name__ == "__main__":
-    
-    s3 = s3_connection()
-    if s3:
-        cap = cv2.VideoCapture(0)
+    subscriber.subscribe(location_objecting)
+    cap = cv2.VideoCapture(0)
 
-        cfg_path = "./yolov3-tiny.cfg"
-        weights_path = "./yolov3-tiny.weights"
-        names_path = "./label.names" 
+    if not cap.isOpened():
+        logging.error("Error: Could not open video capture device.")
+        exit()
 
-        if not os.path.isfile(cfg_path) or not os.path.isfile(weights_path) or not os.path.isfile(names_path):
-            print("Error: YOLO configuration or weight files not found.")
-        else:
-            net, classes, output_layers = load_yolo_model(cfg_path, weights_path, names_path)
+    try:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                logging.error("Error: Could not read frame from video capture device.")
+                break
 
-            while cap.isOpened():
-                ret, frame = cap.read()
-                if not ret:
-                    print("캡처 종료")
-                    break
+            cv2.imshow('Webcam Feed', frame)
 
-                cv2.imshow("Video", frame)
-                if cv2.waitKey(60) == ord('q'):
-                    print("영상 종료")
-                    break
+            if capture_requested:
+                # 최근에 처리하지 않은 이미지만 처리합니다.
+                capture_and_process_image(frame)
+                # 중복 캡처를 방지하기 위해 캡처_요청됨을 재설정합니다.
+                capture_requested = False
 
-                detected_image = detect_and_save_image(net, output_layers, frame, classes)
-                if detected_image:
-                    s3_url = upload_file_to_s3_and_get_url(s3, detected_image, "factorys", detected_image)
-                    if s3_url:
-                        connection = mysql_connection()
-                        if connection:
-                            insert_image_url_to_mysql(connection, detected_image, s3_url)
-                            connection.close()
-                    os.remove(detected_image)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
-            cap.release()
-            cv2.destroyAllWindows()
+    except KeyboardInterrupt:
+        logging.info("Interrupted")
 
-
-
-# MySQL에서 데이터를 조회하는 함수
-# def fetch_images_from_mysql(connection):
-#     try:
-#         with connection.cursor() as cursor:
-#             sql = "SELECT * FROM myapp_images"
-#             cursor.execute(sql)
-#             results = cursor.fetchall()
-#             for row in results:
-#                 print(row)
-#     except pymysql.MySQLError as e:
-#         print(f"Error fetching data from MySQL: {e}")
-
-# if __name__ == "__main__":
-#     s3 = s3_connection()
-#     if s3:
-#         file_name = "./myproject/myapp/img/sss.png"
-#         object_name = "아앙.jpg"
-#         s3_url = upload_file_to_s3_and_get_url(s3, file_name, "factorys", object_name)
-#         if s3_url:
-#             connection = mysql_connection()
-#             if connection:
-#                 insert_image_url_to_mysql(connection, object_name, s3_url)
-#                 fetch_images_from_mysql(connection)  # Fetch and print the images
-#                 connection.close()
+    finally:
+        subscriber.unsubscribe()
+        client.terminate()
+        cap.release()
+        cv2.destroyAllWindows()
+        logging.info("Terminated ROS client connection.")
