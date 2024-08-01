@@ -132,6 +132,11 @@ def detect_and_save_image(net, output_layers, frame, classes):
                     class_ids.append(class_id)
 
         indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+        detected_objects = [classes[class_ids[i]] for i in indexes.flatten()]
+
+        if len(indexes) == 0 or len(detected_objects) == 0:
+            logging.info("No relevant objects detected.")
+            return None
 
         for i in range(len(boxes)):
             if i in indexes:
@@ -215,7 +220,7 @@ if __name__ == "__main__":
 
             cv2.imshow('Webcam Feed', frame)
 
-            if capture_requested:
+            if capture_requested and last_location == "2-1":
                 # 최근에 처리하지 않은 이미지만 처리합니다.
                 capture_and_process_image(frame)
                 # 중복 캡처를 방지하기 위해 캡처_요청됨을 재설정합니다.
