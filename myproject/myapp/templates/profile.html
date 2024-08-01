@@ -345,6 +345,7 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         setActiveMenu(0) // 페이지 넘버링
+
         let xhr = new XMLHttpRequest(); 
         let url = "http://127.0.0.1:8000//test01week";       
         
@@ -418,38 +419,7 @@
     qr_val[0].addEventListener('change', () => {
 
     console.log(qr_val[0].textContent);
-
-
-
     });
-
-    // 테이블 row 행 고정
-    // const userAdd = ()=> {
-    //     let trCnt = document.getElementsById('imageTable').length;
-    //     let inner = "";
-    //     console.log(trCnt);
-    //     if(trCnt == 11){
-    //         $('#imageTable').hide();
-    //     }
-    // }
-    //   if (qr_val == 1-1) {
-    //     console.log('1-1 이 선택됐음');
-    //     // document.getElementsByClassName('.test').innerHtml = 삐리리
-    //   }
-
-        // $(function(){
-        //     $(location_on).eq(0).blind('click', function(){
-        //         console.log(location_on.eq(0));
-        //     })
-        // })
-
-    //   $(function(){
-    //     $('.dot_blue').parent().click(function(event){
-    //         console.log("Jquery test")
-    //         $(this).after('<img style="z-index:200; position:absolute;" src="http://127.0.0.1:8000/static/img/location-point.svg">');
-    //     })
-    //   })
-    
     </script>
 
 <!-- <script>
