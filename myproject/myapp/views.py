@@ -42,7 +42,7 @@ def home(request):
 
 def signin(request):
     if request.user.is_authenticated:
-        return render(request, 'home.html')
+        return render(request, 'profile.html')
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -58,9 +58,9 @@ def signin(request):
 def profile(request):
     return render(request, 'profile.html')
 
-# def signout(request):
-#     logout(request)
-#     return redirect('/')
+def signout(request):
+    logout(request)
+    return redirect('/')
 
 def email_view(request):
     return render(request, 'email.html')
