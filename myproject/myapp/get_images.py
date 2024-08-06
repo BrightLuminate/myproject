@@ -175,9 +175,9 @@ def location_objecting(message):
         logging.info(f"Location updated to: {location}")
 
 def capture_and_process_image(frame):
-    cfg_path = "./yolov3-tiny.cfg"
-    weights_path = "./yolov3-tiny.weights"
-    names_path = "./label.names"
+    cfg_path = "./yolo-s3-stream/yolov3-tiny.cfg"
+    weights_path = "./yolo-s3-stream/yolov3-tiny.weights"
+    names_path = "./yolo-s3-stream/label.names"
 
     if not os.path.isfile(cfg_path) or not os.path.isfile(weights_path) or not os.path.isfile(names_path):
         logging.error("Error: YOLO configuration or weight files not found.")
