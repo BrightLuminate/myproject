@@ -234,3 +234,11 @@ def getTestyear(request):
     datas = Images.objects.filter(Detection_Time__date__range=(start_date, today)) 
     serializer = TestDataSerializer(datas, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_chart_data(request):
+    defective_count = Images.objects.filter(category='defective').count()
+    normal_count = Images.objects.filter(category='normal').count()
+
+    return Response({'defective': defective_count, 'normal': normal_count})
