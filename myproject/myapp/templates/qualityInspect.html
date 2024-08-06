@@ -37,7 +37,7 @@
                 <div class="card-body">
                     <p class="notosans400 fons13 color_black">작업현황</p>
                     <div class="navigation" style="justify-content: space-between;">
-                        <div style="width: 75%;">
+                        <div style="width: 100%; height: 370px;  display: flex; align-items: flex-start; justify-content: space-between; gap:20px;">
                             <table class="table table-striped table-hover fons14 txt_cen">
                                 <thead>
                                   <tr style="border-top: 1px solid #eee;">
@@ -48,46 +48,31 @@
                                     <th scope="col">사진</th>
                                   </tr>
                                 </thead>
-                                <tbody id="imageTable">
+                                <tbody id="imageTable" class="cursor">
                                 </tbody>
-                                <!-- <tbody>
-                                  <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                  </tr>
-                                </tbody> -->
                             </table>
-                            <div aria-label="Page navigation example">
-                              <ul class="pagination pagination-sm justify-content-center" id="pagination">
-                                <li class="page-item">
-                                  <a class="page-link" href="#" aria-label="Previous" onclick="changePage('prev')">
-                                    <span aria-hidden="true">&laquo;</span>
-                                  </a>
-                                </li>
-                                <li class="page-item"><a class="page-link active" href="#" onclick="changePage(1)">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#" onclick="changePage(2)">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#" onclick="changePage(3)">3</a></li>
-                                <li class="page-item">
-                                  <a class="page-link" href="#" aria-label="Next" onclick="changePage('next')">
-                                    <span aria-hidden="true">&raquo;</span>
-                                  </a>
-                                </li>
-                              </ul>
+                            <div id="imageTable" style=" width: 394px; height: 355px; overflow: hidden; background-color: #eee; border-radius: 5px;">
+                              <img id="displayedImage" src="" style="width: 100%; height: 100%;" />
                             </div>
-
-                            <!-- <div class="pagination" id="pagination">
-                              <a href="#" onclick="changePage('prev')">&laquo;</a>
-                              <a href="#" class="active" onclick="changePage(1)">1</a>
-                              <a href="#" onclick="changePage(2)">2</a>
-                              <a href="#" onclick="changePage(3)">3</a>
-                              <a href="#" onclick="changePage('next')">&raquo;</a>
-                            </div> -->
                         </div>
-                        <div id="imageTable" style=" width: 394px; height: 410px; overflow: hidden; background-color: #eee; border-radius: 5px;">
-                          <img id="displayedImage" src="" style="width: 100%; height: 100%;" />
-                        </div>
+                        
+                    </div>
+                    <div aria-label="Page navigation example">
+                      <ul class="pagination pagination-sm justify-content-center" id="pagination">
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Previous" onclick="changePage('prev')">
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+                        <li class="page-item"><a class="page-link active" href="#" onclick="changePage(1)">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#" onclick="changePage(2)">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#" onclick="changePage(3)">3</a></li>
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Next" onclick="changePage('next')">
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                      </ul>
                     </div>
                 </div>
             </div>
@@ -113,7 +98,7 @@
 
 
 
-  const rowsPerPage = 5;
+  const rowsPerPage = 7;
   let currentPage = 1;
   let jsonData = [];
 
