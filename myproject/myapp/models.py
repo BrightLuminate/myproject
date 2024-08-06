@@ -12,6 +12,9 @@ class Images(models.Model):
     Pull_Measurement = models.CharField(max_length=255)
     coustomer = models.TextField(max_length=255)
     image_url = models.URLField()
-
+    category = models.CharField(max_length=255)
+#  default='unknown'
     def __str__(self):
         return f'{self.Detection_Time} : {self.image_name} : {self.Pull_Measurement} :  {self.coustomer} : {self.image_url}'
+
+
