@@ -15,9 +15,9 @@
                 <div class="notosans400 fons13" style="display: flex; align-items: center; justify-content: space-between;">
                   <div class="color_black">HD-1500-00 실시간</div>
                   <div>
-                    <button type="button" class="btn btn-dark btn-sm notosans400" style="font-size: 11px;"  id="">주간</button>
-                    <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="">월간</button>
-                    <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="">년간</button>
+                    <button type="button" class="btn btn-dark btn-sm notosans400" style="font-size: 11px;" id="weeklyBtn">주간</button>
+                    <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="monthlyBtn">월간</button>
+                    <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="yearlyBtn">년간</button>
                   </div> 
 
                 </div>
@@ -51,7 +51,7 @@
                                 <tbody id="imageTable" class="cursor">
                                 </tbody>
                             </table>
-                            <div id="imageTable" style=" width: 394px; height: 355px; overflow: hidden; background-color: #eee; border-radius: 5px;">
+                            <div id="imageTable" style=" width: 510px; height: 355px; overflow: hidden; background-color: #eee; border-radius: 5px;">
                               <img id="displayedImage" src="" style="width: 100%; height: 100%;" />
                             </div>
                         </div>
@@ -79,6 +79,7 @@
             {% include "layout/foot.html" %}
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   setActiveMenu(2)
   // URL에서 쿼리 문자열을 가져옴
@@ -97,57 +98,72 @@
   }
 
 
-
+ // Initialize pagination and data
   const rowsPerPage = 7;
   let currentPage = 1;
   let jsonData = [];
 
-  // window.onload = function() {
-  let xhr = new XMLHttpRequest();
-  let url = "http://127.0.0.1:8000/test01week";  // URL 수정
+  // Fetch data asynchronously
+  function fetchData(url) {
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        jsonData = data;
+        displayTable(jsonData, currentPage, rowsPerPage);
+        setupPagination(jsonData.length, rowsPerPage);
+        if (jsonData.length > 0) {
+          displayImage(jsonData[0].image_url);
+        }
+      })
+      .catch(error => console.error("Error fetching data:", error));
+  }
 
-  xhr.open("GET", url, true);
-  xhr.onload = function() {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      jsonData = JSON.parse(xhr.response);
-      displayTable(jsonData, currentPage, rowsPerPage);
-      setupPagination(jsonData.length, rowsPerPage);
-      // 데이터가 있는 경우 첫 번째 이미지를 표시합니다.
-      if (jsonData.length > 0) {
-        displayImage(jsonData[0].image_url);
-      }
-    } else {
-      console.log("Error");
-    }
-  };
-  xhr.send();
+  // Load initial data
+  fetchData("http://127.0.0.1:8000/test01week");
+
+  // // window.onload = function() {
+  // let xhr = new XMLHttpRequest();
+  // let url = "http://127.0.0.1:8000/test01week";  // URL 수정
+
+  // xhr.open("GET", url, true);
+  // xhr.onload = function() {
+  //   if (xhr.readyState === 4 && xhr.status === 200) {
+  //     jsonData = JSON.parse(xhr.response);
+  //     displayTable(jsonData, currentPage, rowsPerPage);
+  //     setupPagination(jsonData.length, rowsPerPage);
+  //     // 데이터가 있는 경우 첫 번째 이미지를 표시합니다.
+  //     if (jsonData.length > 0) {
+  //       displayImage(jsonData[0].image_url);
+  //     }
+  //   } else {
+  //     console.log("Error");
+  //   }
   // };
+  // xhr.send();
+  // // };
 
-  function displayTable(data, page, rows) {
+   // Display data in table
+   function displayTable(data, page, rows) {
     const tableBody = document.getElementById('imageTable');
     tableBody.innerHTML = "";
-    let start = (page - 1) * rows;
-    let end = start + rows;
-    let paginatedItems = data.slice(start, end);
+    const start = (page - 1) * rows;
+    const paginatedItems = data.slice(start, start + rows);
 
-    for (let i = 0; i < paginatedItems.length; i++) {
-      let row = tableBody.insertRow();
-      row.insertCell(0).innerText = paginatedItems[i].id;
-      row.insertCell(1).innerText = paginatedItems[i].Detection_Time;
-      row.insertCell(2).innerText = paginatedItems[i].Pull_Measurement;
-      row.insertCell(3).innerText = paginatedItems[i].coustomer;
-      
-      let imgCell = row.insertCell(4);
-      let img = document.createElement('img');
-      img.src = paginatedItems[i].image_url;
+    paginatedItems.forEach(item => {
+      const row = tableBody.insertRow();
+      row.insertCell(0).innerText = item.id;
+      row.insertCell(1).innerText = item.Detection_Time;
+      row.insertCell(2).innerText = item.Pull_Measurement;
+      row.insertCell(3).innerText = item.coustomer;
+
+      const imgCell = row.insertCell(4);
+      const img = document.createElement('img');
+      img.src = item.image_url;
       img.width = 50;
       imgCell.appendChild(img);
-      
-      // 각 행에 클릭 이벤트 추가
-      row.onclick = function() {
-        displayImage(paginatedItems[i].image_url);
-      };
-    }
+
+      row.onclick = () => displayImage(item.image_url);
+    });
   }
 
   function setupPagination(totalItems, rows) {
@@ -192,9 +208,119 @@
     }
   }
 
+  // function displayImage(imageUrl) {
+  //   const displayedImage = document.getElementById('displayedImage');
+  //   displayedImage.src = imageUrl;
+  // }
+
+ ///////////////////////
+  // Display selected image
   function displayImage(imageUrl) {
-    const displayedImage = document.getElementById('displayedImage');
-    displayedImage.src = imageUrl;
+    document.getElementById('displayedImage').src = imageUrl;
   }
+
+// Fetch line chart data
+function fetchChartData(url, type) {
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        let labels = [];
+        let counts = [];
+
+        if (type === 'weekly') {
+          const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+          labels = daysOfWeek;
+          counts = daysOfWeek.map(day => data.filter(item => new Date(item.Detection_Time).toLocaleDateString('en-US', { weekday: 'long' }) === day).length);
+        } else if (type === 'monthly') {
+          const daysOfMonth = Array.from({ length: 31 }, (_, i) => i + 1);
+          labels = daysOfMonth;
+          counts = daysOfMonth.map(day => data.filter(item => new Date(item.Detection_Time).getDate() === day).length);
+        } else if (type === 'yearly') {
+          const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+          labels = monthsOfYear;
+          counts = monthsOfYear.map(month => data.filter(item => new Date(item.Detection_Time).toLocaleDateString('en-US', { month: 'long' }) === month).length);
+        }
+
+        // Update line chart
+        const ctx = document.getElementById('myChart01').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: '생산량 대비 뷸량률 그래프',
+              data: counts,
+              backgroundColor: 'rgba(245, 40, 145, 0.8)',
+              borderColor: 'rgba(245, 40, 145, 0.8)',
+              borderWidth: 3
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      })
+      .catch(error => console.error('Error fetching chart data:', error));
+  }
+
+  // Add event listeners to buttons
+  document.getElementById('weeklyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01week', 'weekly'));
+  document.getElementById('monthlyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01month', 'monthly'));
+  document.getElementById('yearlyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01year', 'yearly'));
+
+  // Initial line chart load
+  fetchChartData('http://127.0.0.1:8000/test01week', 'weekly');
+
+  // Fetch doughnut chart data and initialize chartㄴ
+fetch('http://127.0.0.1:8000/api/chart-data/')
+  .then(response => {
+    console.log('API response received:', response); // Log the response object
+    return response.json();
+  })
+  .then(data => {
+    console.log('Parsed JSON data:', data); 
+    if (data.defective !== undefined && data.normal !== undefined) {
+      const ctx = document.getElementById('myChart02').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['불량', '정상'], 
+          datasets: [{
+            label: 'Quality Ratio',
+            data: [data.defective, data.normal],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(75, 192, 192, 0.2)' 
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: '불량 vs 정상 비율' // Title in Korean
+            }
+          }
+        },
+      });
+    } else {
+      console.error('Unexpected data format:', data);
+    }
+  })
+  .catch(error => console.error('Error fetching doughnut chart data:', error));
 </script>
+
 {% endblock %}
