@@ -38,14 +38,14 @@
                     <p class="notosans400 fons13 color_black">작업현황</p>
                     <div class="navigation" style="justify-content: space-between;">
                         <div style="width: 75%;">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-striped table-hover fons14 txt_cen">
                                 <thead>
                                   <tr style="border-top: 1px solid #eee;">
                                     <th scope="col">No</th>
-                                    <th scope="col">Detection_Time</th>
-                                    <th scope="col">Pull Measurement(MM/RPM)</th>
-                                    <th scope="col">coustomer</th>
-                                    <th scope="col">Photos</th>
+                                    <th scope="col">검출시간</th>
+                                    <th scope="col">품질측정(mm/RPM)</th>
+                                    <th scope="col">고객사</th>
+                                    <th scope="col">사진</th>
                                   </tr>
                                 </thead>
                                 <tbody id="imageTable">
@@ -59,20 +59,36 @@
                                   </tr>
                                 </tbody> -->
                             </table>
-                            <div class="pagination" id="pagination">
+                            <div aria-label="Page navigation example">
+                              <ul class="pagination pagination-sm justify-content-center" id="pagination">
+                                <li class="page-item">
+                                  <a class="page-link" href="#" aria-label="Previous" onclick="changePage('prev')">
+                                    <span aria-hidden="true">&laquo;</span>
+                                  </a>
+                                </li>
+                                <li class="page-item"><a class="page-link active" href="#" onclick="changePage(1)">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#" onclick="changePage(2)">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#" onclick="changePage(3)">3</a></li>
+                                <li class="page-item">
+                                  <a class="page-link" href="#" aria-label="Next" onclick="changePage('next')">
+                                    <span aria-hidden="true">&raquo;</span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+
+                            <!-- <div class="pagination" id="pagination">
                               <a href="#" onclick="changePage('prev')">&laquo;</a>
                               <a href="#" class="active" onclick="changePage(1)">1</a>
                               <a href="#" onclick="changePage(2)">2</a>
                               <a href="#" onclick="changePage(3)">3</a>
                               <a href="#" onclick="changePage('next')">&raquo;</a>
-                            </div>
+                            </div> -->
                         </div>
                         <div id="imageTable" style=" width: 394px; height: 410px; overflow: hidden; background-color: #eee; border-radius: 5px;">
                           <img id="displayedImage" src="" style="width: 100%; height: 100%;" />
                         </div>
-                        
                     </div>
-                    
                 </div>
             </div>
             {% include "layout/foot.html" %}
@@ -152,16 +168,21 @@
   function setupPagination(totalItems, rows) {
     const pagination = document.getElementById('pagination');
     pagination.innerHTML = `
-      <a href="#" onclick="changePage('prev')">&laquo;</a>
+      <a class="page-link" href="#" aria-label="Previous" onclick="changePage('prev')">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
     `;
     let pageCount = Math.ceil(totalItems / rows);
     for (let i = 1; i <= pageCount; i++) {
       pagination.innerHTML += `
-        <a href="#" ${i === currentPage ? 'class="active"' : ''} onclick="changePage(${i})">${i}</a>
-      `;
+        <a href="#" ${i !== currentPage ? 'class="page-link"' : 'class="page-link active'} onclick="changePage(${i})">${i}</a>
+      `
+      
     }
     pagination.innerHTML += `
-      <a href="#" onclick="changePage('next')">&raquo;</a>
+      <a class="page-link" href="#" aria-label="Next" onclick="changePage('next')">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
     `;
   }
 
@@ -179,6 +200,7 @@
     }
     displayTable(jsonData, currentPage, rowsPerPage);
     setupPagination(jsonData.length, rowsPerPage);
+
     // 새 페이지의 첫 번째 이미지 표시
     if (jsonData.length > 0) {
       displayImage(jsonData[(currentPage - 1) * rowsPerPage].image_url);
