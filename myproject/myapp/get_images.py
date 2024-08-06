@@ -65,12 +65,12 @@ def s3_connection():
         return None
 
 # S3에 파일 업로드 및 URL 가져오기
-def upload_file_to_s3_and_get_url(s3, file_name, bucket_name, object_name):
+def upload_file_to_s3_and_get_url(s3, file_path, bucket_name, object_name):
     try:
-        content_type, _ = mimetypes.guess_type(file_name)
+        content_type, _ = mimetypes.guess_type(file_path)
         content_type = content_type or 'binary/octet-stream'
 
-        with open(file_name, 'rb') as file:
+        with open(file_path, 'rb') as file:
             s3.upload_fileobj(
                 file,
                 bucket_name,
@@ -100,10 +100,10 @@ def load_yolo_model(cfg_path, weights_path, names_path):
         logging.error(f"Error loading YOLO model: {e}")
         return None, None, None
 
-# 물체 감지 및 이미지 저장
-def detect_and_save_image(net, output_layers, frame, classes):
+# 물체 감지 및 이미지에 레이블 표시
+def detect_and_display_objects(net, output_layers, frame, classes):
     try:
-        height, width, channels = frame.shape
+        height, width, _ = frame.shape
 
         blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
         net.setInput(blob)
@@ -136,25 +136,21 @@ def detect_and_save_image(net, output_layers, frame, classes):
 
         if len(indexes) == 0 or len(detected_objects) == 0:
             logging.info("No relevant objects detected.")
-            return None
+            return frame
 
         for i in range(len(boxes)):
-            if i in indexes:
+            if i in indexes.flatten():
                 x, y, w, h = boxes[i]
                 label = str(classes[class_ids[i]])
                 color = (0, 255, 0)
                 cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
                 cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, color, 2)
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        image_name = f"detected_{timestamp}.jpg"
-        cv2.imwrite(image_name, frame)
-        logging.info(f"Image saved: {image_name}")
-        return image_name
+        return frame
 
     except Exception as e:
         logging.error(f"Error detecting objects: {e}")
-        return None
+        return frame
 
 # ROS 설정 및 메인 루프
 ros_host = os.getenv('ROS_HOST', 'localhost')
@@ -191,17 +187,29 @@ def capture_and_process_image(frame):
     if net is None or classes is None or output_layers is None:
         return
 
-    detected_image = detect_and_save_image(net, output_layers, frame, classes)
-    if detected_image:
-        s3 = s3_connection()
-        if s3:
-            s3_url = upload_file_to_s3_and_get_url(s3, detected_image, "factorys", detected_image)
-            if s3_url:
-                connection = mysql_connection()
-                if connection:
-                    insert_image_url_to_mysql(connection, detected_image, s3_url)
-                    connection.close()
-            os.remove(detected_image)
+    save_folder = 'myproject/myapp/img'
+    detected_frame = detect_and_display_objects(net, output_layers, frame, classes)
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    image_name = f"detected_{timestamp}.jpg"
+    image_path = os.path.join(save_folder, image_name)
+
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
+    
+    cv2.imwrite(image_path, detected_frame)
+    logging.info(f"Image saved: {image_path}")
+
+    s3 = s3_connection()
+    if s3:
+        s3_url = upload_file_to_s3_and_get_url(s3, image_path, "factorys", os.path.basename(image_path))
+        if s3_url:
+            connection = mysql_connection()
+            if connection:
+                insert_image_url_to_mysql(connection, os.path.basename(image_path), s3_url)
+                connection.close()
+    # 필요하지 않으면 로컬 파일 삭제
+    # os.remove(image_path)
 
 if __name__ == "__main__":
     subscriber.subscribe(location_objecting)
@@ -221,9 +229,7 @@ if __name__ == "__main__":
             cv2.imshow('Webcam Feed', frame)
 
             if capture_requested and last_location == "2-1":
-                # 최근에 처리하지 않은 이미지만 처리합니다.
                 capture_and_process_image(frame)
-                # 중복 캡처를 방지하기 위해 캡처_요청됨을 재설정합니다.
                 capture_requested = False
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
