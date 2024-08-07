@@ -22,7 +22,7 @@ cap = cv2.VideoCapture(0)
 
 cap.set(cv2.CAP_PROP_FPS, 30)
 
-net = cv2.dnn.readNet("yolov4-tiny.weights", "yolov4-tiny.cfg")
+net = cv2.dnn.readNet("yolov3-tiny.weights", "yolov3-tiny.cfg")
 classes = []
 
 # ROS 설정 및 메인 루프
@@ -190,8 +190,8 @@ def location_objecting(message):
         logging.info(f"Location updated to: {location}")
 
 def capture_and_process_image(frame):
-    cfg_path = "./yolov4-tiny.cfg"
-    weights_path = "./yolov4-tiny.weights"
+    cfg_path = "./yolov3-tiny.cfg"
+    weights_path = "./yolov3-tiny.weights"
     names_path = "./label.names"
 
     if not os.path.isfile(cfg_path) or not os.path.isfile(weights_path) or not os.path.isfile(names_path):
