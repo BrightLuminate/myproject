@@ -18,8 +18,9 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__) 
-# cap = cv2.VideoCapture(0) 
+cap = cv2.VideoCapture(0) 
 
+cap.set(cv2.CAP_PROP_FPS, 30)
 net = cv2.dnn.readNet("yolov3-tiny.weights", "yolov3-tiny.cfg")
 classes = []
 
@@ -233,11 +234,11 @@ def generate():
     subscriber = roslibpy.Topic(client, '/qr', 'std_msgs/String')
 
     subscriber.subscribe(location_objecting)
-    cap = cv2.VideoCapture(0) 
+    
 
     if not cap.isOpened():
         logging.error("Error: Could not open video capture device.")
-        exit()
+        return
     try : 
         while True:
             ret, img = cap.read()
