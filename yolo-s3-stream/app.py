@@ -191,7 +191,7 @@ def location_objecting(message):
 
 def capture_and_process_image(frame):
     cfg_path = "./yolov3-tiny.cfg"
-    weights_path = "./yolov3-tiny.weights"
+    weights_path = "./yolov3tiny.weights"
     names_path = "./label.names"
 
     if not os.path.isfile(cfg_path) or not os.path.isfile(weights_path) or not os.path.isfile(names_path):
