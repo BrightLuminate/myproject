@@ -18,9 +18,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__) 
-cap = cv2.VideoCapture(0) 
-
-cap.set(cv2.CAP_PROP_FPS, 30)
+# cap = cv2.VideoCapture(0) 
 
 net = cv2.dnn.readNet("yolov3-tiny.weights", "yolov3-tiny.cfg")
 classes = []
@@ -191,7 +189,7 @@ def location_objecting(message):
 
 def capture_and_process_image(frame):
     cfg_path = "./yolov3-tiny.cfg"
-    weights_path = "./yolov3tiny.weights"
+    weights_path = "./yolov3-tiny.weights"
     names_path = "./label.names"
 
     if not os.path.isfile(cfg_path) or not os.path.isfile(weights_path) or not os.path.isfile(names_path):
@@ -235,11 +233,11 @@ def generate():
     subscriber = roslibpy.Topic(client, '/qr', 'std_msgs/String')
 
     subscriber.subscribe(location_objecting)
-    
+    cap = cv2.VideoCapture(0) 
 
     if not cap.isOpened():
         logging.error("Error: Could not open video capture device.")
-        return
+        exit()
     try : 
         while True:
             ret, img = cap.read()
@@ -261,7 +259,7 @@ def generate():
 
                 if capture_requested and last_location == "2-1":
                     capture_and_process_image(img)
-                    capture_requested = False
+                    capture_requested = True
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
