@@ -297,7 +297,8 @@
                             
                             <div id="capture">
                                 <!-- <img src="http://192.168.0.11:8080/stream?topic=/csi_cam_0/image_raw"/> -->
-                               <img src="http://localhost:8001/video_feed"  class="videoStream" muted playsinline autoplay src style="width:100%;" />
+                                <!-- <img class="videoStream" muted playsinline autoplay src style="width:100%;" /> -->
+                                <img src="http://localhost:8001/video_feed"  class="videoStream" muted playsinline autoplay src style="width:100%;" />
                                 
                             </div>
                             <!-- <canvas style="position: absolute; top:0; left: 0; z-index: 100;" class="capture"></canvas> -->
@@ -395,15 +396,20 @@
             }
         };
         xhr.send();
-            var currentNumber = 0;
-            var interval = setInterval(() => {
+            let currentNumber = 0;
+
+            let interval = setInterval(() => {
             document.getElementById('counter').textContent = currentNumber;
             currentNumber += 100;
             if (currentNumber > 105001) {
                 clearInterval(interval);
+                const cn_comma = currentNumber.toLocaleString('ko-KR');
+                console.log("localestring: ", cn_comma);
+                document.getElementById('counter').textContent = cn_comma;
                 };
             }, 1); // 매 100밀리초(0.1초)마다 숫자를 증가시킴
-    
+
+            // document.writeln(cn1);
     });
     
 
