@@ -12,15 +12,27 @@
         <div class="center_box_02_01">
             <div class="item01 min-w546">
                 <div class="notosans400 fons13 color_black">HD-1500-00 실시간</div>
-                <div class="cam_box" style="border-radius: 10px; overflow: hidden; background: url('/static/img/005.png');" >
+                <div id="camImg" class="cam_box" style="border-radius: 10px; overflow: hidden; background-image:url('/static/img/005.png');" >
+                
                     <!-- <img src="http://192.168.0.11:8080/stream?topic=/csi_cam_0/image_raw" style="height:100%; width: 100%;"/> -->
                 </div>
+
+
+                <!-- <div id="camImg" class="cam_box" style="border-radius: 10px; overflow: hidden; background: url('/static/img/005.png');" >
+                    <script>
+                        let cam_imgs = document.getElementById(camImg).style.backgroundImage;
+
+                        let imgchage = "/static/img/005.png";
+                        document.getElementById(camImg).style.backgroundImage = "url('"+ cam_imgs +"')";
+                    </script>
+                    <img src="http://192.168.0.11:8080/stream?topic=/csi_cam_0/image_raw" style="height:100%; width: 100%;"/>
+                </div> -->
             </div>
             <div class="item02">
                 <div class="notosans400 fons13 color_black">기기 위치</div>
                 <div class="map_box" style="border-radius: 10px; overflow: hidden; object-fit: cover;" >
                     <img src="\static\img\map_long.png" style="height:100%;"/>
-                    <div class="1-1" style="position:relative; z-index: 100; top:-210px; left: 217px;" >
+                    <div class="1-1" style="position:relative; z-index: 100; top:-210px; left: 185px;" >
                         <img class="a" style="position: relative; z-index: 500; width: 25px; bottom:18px; right: -19.5px;" src="http://127.0.0.1:8000/static/img/location_on.svg"/>
                         <i type="button" class="dot_blue"></i>
                     </div>
@@ -412,9 +424,28 @@
 <script>
     setActiveMenu(1)//페이지 넘버링
     /* ROS Topic */
+    console.log("imgUrl 1")
     let location_nav = document.querySelector(".map_box");
     let location_on = location_nav.querySelectorAll(".dot_blue");
     let qr_select = document.querySelectorAll(".qr");
+
+    let camImgElement = document.getElementById('camImg');
+    let imgUrl = "http://192.168.0.11:8080/stream?topic=/csi_cam_0/image_raw";
+    let imgback = "/static/img/005.png";
+
+    fetch(imgUrl, { method: 'HEAD' })
+    .then(response => {
+        if (response.ok) {
+            camImgElement.style.backgroundImage = "url('" + imgUrl + "')";
+        } else {
+            camImgElement.style.backgroundImage = "url('" + imgback + "')";
+        }
+    })
+    .catch(() => {
+        camImgElement.style.backgroundImage = "url('" + imgback + "')";
+    });
+    
+    
     console.log(qr_select);
 
     
@@ -423,8 +454,6 @@
     qr_val[0].addEventListener('change', () => {
 
     console.log(qr_val[0].textContent);
-
-
 
     });
 </script>
