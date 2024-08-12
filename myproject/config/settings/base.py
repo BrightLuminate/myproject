@@ -3,6 +3,7 @@ from decouple import config
 import pymysql
 import os
 import ssl
+import environ
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -25,7 +26,7 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
-
+USE_TZ = False
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -70,6 +71,10 @@ import os
 AWS_ACCESS_KEY_ID = os.getenv('AWS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_BUCKET_NAME')
+
+
+# mysql js 연동
+
 
 
 # MySQL 데이터베이스 설정
@@ -123,12 +128,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# 이메일
+
+#  기본 디렉토리
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+#  environ 초기화
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 # DRF 설정 Django 앱 추가 
 # DEFAULT_RENDERER_CLASSES: 이 옵션은 콘텐츠 협상에 사용되는 기본 렌더러 클래스를 지정합니다. API 응답이 어떤 형식으로 직렬화될지를 결정합니다.
@@ -166,6 +180,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # settings.py
 
 MEDIA_URL = '/media/'
