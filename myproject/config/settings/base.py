@@ -180,12 +180,9 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # settings.py
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Ensure your BASE_DIR is set appropriately.
 
 LANGUAGE_CODE = 'en-us'
 
