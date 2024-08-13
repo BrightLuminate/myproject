@@ -29,6 +29,7 @@ from .models import ImageModel  # Assuming this is your model name
 from django.shortcuts import render
 from datetime import datetime
 from django.views import View
+from collections import defaultdict
 # 이메일
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
@@ -87,7 +88,6 @@ def send_mail(request):
     return render(request, 'send.html')
 
 
-
 def send_email(request):
     if request.method == "POST":
         recipient = request.POST.get('inputReceiver')
@@ -110,7 +110,6 @@ def send_email(request):
             return HttpResponse("All fields are required.")
 
     return render(request, 'mail.html')
-
 
 # 이미지 업로드를 처리하는 뷰
 
@@ -152,7 +151,7 @@ def show_image(request):
         return render(request, 'success.html', {'image_data': None, 'name': None})
     
 
-# mysql 이미지 한장 나오는방법
+# mysql 이미지 한장 나오느방법
 
 def image(request):
     image_records = Images.objects.all()
@@ -181,7 +180,6 @@ def show_image(request) :
 def show_video(request) :
     return render(request,'pos.html')
 
-
 # create 해주는 api
 @api_view(['POST'])
 def createTestDatas(request):
@@ -199,12 +197,16 @@ def getTestDatas(request, id):
     print(serializer.data["image_url"])
     return Response(serializer.data)
 
+
 # 특정 날짜 read 해주는 api
 @api_view(['GET'])
 def getTestDate(request):
+
     datas = Images.objects.filter(Detection_Time__date=datetime(2024,7,18))
     serializer = TestDataSerializer(datas, many=True)
+
     return Response(serializer.data)
+
 
 def get_first_and_last_date(year, month):
     # 입력된 년도와 월의 첫 날을 구합니다.
@@ -238,6 +240,7 @@ def getTestday(request):
     serializer = TestDataSerializer(datas, many=True)
     return Response(serializer.data)
 
+
 # 주간 데이터 API 엔드포인트
 @api_view(['GET'])
 def getTestweek(request):
@@ -264,6 +267,7 @@ def getTestmonth(request):
     serializer = TestDataSerializer(datas, many=True)
     return Response(serializer.data)
 
+
 # 년간 데이터 API 엔드포인트
 @api_view(['GET'])
 def getTestyear(request):
@@ -282,6 +286,9 @@ def get_chart_data(request):
     return Response({'defective': defective_count, 'normal': normal_count})
 
 #  정상률 불량률 수치 
+counters = defaultdict(int)
+
+# 메트릭 데이터를 반환하는 뷰
 def get_metrics(request):
     with connection.cursor() as cursor:
         cursor.execute("""
@@ -306,9 +313,8 @@ def get_metrics(request):
         'defect_rate': row[4],
     }
     return JsonResponse(data)
+
 # 도넛
-
-
 def get_daily_classification_counts(request):
     today = date.today()
     defective_count = Images.objects.filter(classification='def_front', Detection_Time__date=today).count()
@@ -322,3 +328,18 @@ def get_daily_classification_counts(request):
     }
 
     return JsonResponse(data)
+
+def quality_inspect(request):
+    # GET 요청에서 img 파라미터를 받음
+    image_url = request.GET.get('img')
+
+    if image_url:
+        # 받은 이미지 URL을 처리하는 로직을 여기에 작성
+        # 예를 들어, 이미지 분석, 검증, 데이터베이스에 기록 등
+        print(f"Received image URL: {image_url}")
+
+        # 처리가 완료된 후 렌더링할 페이지로 이동
+        return render(request, 'quality_inspect.html', {'image_url': image_url})
+    else:
+        # img 파라미터가 없는 경우 오류 처리
+        return render(request, 'error.html', {'error': 'No image URL provided'})
