@@ -17,18 +17,18 @@
                 </div>
                 <div class="w_30 d_j_center min-w400">
                     <span>현재 생산</span>
-                    <span class="fons22 whit roboto400">104900</span>
+                    <span id="currentProduction" class="fons22 whit roboto400">-</span>
                     <span>개</span>
                     <span class="gray70">/</span>
-                    <span class="fons22 roboto300">98.5</span>
+                    <span id="ok_percent" class="fons22 roboto300">-</span>
                     <span >%</span>
                 </div>
                 <div class="w_30 d_j_end min-w400">
                     <span>불량</span>
-                    <span class="fons22 whit roboto400">100</span>
+                    <span id="defectiveCount" class="fons22 whit roboto400">-</span>
                     <span>개</span>
                     <span class="gray70">/</span>
-                    <span class="fons22 roboto300">2.5</span>
+                    <span id="def_percent" class="fons22 roboto300">-</span>
                     <span>%</span>
                 </div>
                 <!-- <div class="wow flipInX" data-wow-duration="2s" data-wow-delay="0.5s" data-wow-iteration="infinite">
@@ -299,7 +299,6 @@
                                 <!-- <img src="http://192.168.0.11:8080/stream?topic=/csi_cam_0/image_raw"/> -->
                                 <!-- <img class="videoStream" muted playsinline autoplay src style="width:100%;" /> -->
                                 <img src="http://localhost:8001/video_feed"  class="videoStream" muted playsinline autoplay src style="width:100%;" />
-                                
                             </div>
                             <!-- <canvas style="position: absolute; top:0; left: 0; z-index: 100;" class="capture"></canvas> -->
                         
@@ -319,21 +318,15 @@
                                 <tr style="border-top: 1px solid #eee;">
                                     <th scope="col">No</th>
                                     <th scope="col">검출시간</th>
+                                    <th scope="col">불량종류</th>
                                     <th scope="col">품질측정(mm/RPM)</th>
-                                    <th scope="col">고객사</th>
+                                    <th scope="col">불량 종류</th>
+                                    <th scope="col">창고위치</th>
                                     <th scope="col">사진</th>
                                 </tr>
                             </thead>
                             <tbody id="imageTable" class="cursor">
                             </tbody>
-                            <!-- <tbody>
-                                <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                                </tr>
-                            </tbody> -->
                         </table>
                     </div>
                 </div>
@@ -345,8 +338,9 @@
     <script src="/static/js/location.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        setActiveMenu(0) // 페이지 넘버링
+        setActiveMenu(0) // 페이지 넘버
 
+        // Ajax 요청
         let xhr = new XMLHttpRequest(); 
         let url = "http://127.0.0.1:8000//test01week";       
         
@@ -354,46 +348,37 @@
         xhr.onload = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 let json = JSON.parse(xhr.response);
-                let tableBody = document.getElementById('imageTable');
-
-                console.log(JSON.parse(xhr.response))
-                console.log(json.length)
-
+                json.sort((a, b) => b.id - a.id);
+                json = json.filter(item => item.category !== '출하 창고');
                 json.length = 7;
 
-                for (let i = 0; i < json.length; i++) {
-                    // console.log(json[i].id);
-                    // console.log(json[i].Detection_Time);
-                    // console.log(json[i].image_url);
-                    // 생성 반복적으로 보여주는  
-                    let row = tableBody.insertRow();
+                let tableBody = document.getElementById('imageTable');
+                
 
-                    // 패딩을 각 셀에 적용
-                    for (let j = 0; j < 5; j++) {
-                        let cell = row.insertCell(j);
-                        cell.style.padding = '20.3px 0';
-                    }
+                json.forEach(item => {
+                    const row = tableBody.insertRow();
+                    cell.style.padding = '20.3px 0';
+                    
+                    row.insertCell(0).innerText = item.id;
+                    row.insertCell(1).innerText = item.Detection_Time;
+                    row.insertCell(2).innerText = item.defect_types;
+                    row.insertCell(3).innerText = item.Pull_Measurement;
+                    row.insertCell(4).innerText = item.category;
 
-                    row.insertCell(0).innerText = json[i].id;
-                    row.insertCell(1).innerText = json[i].Detection_Time;
-                    row.insertCell(2).innerText = json[i].Pull_Measurement;
-                    row.insertCell(3).innerText = json[i].coustomer;  
-
-                    row.addEventListener("click", function(e){                        
-                        window.location.href = `http://127.0.0.1:8000/profile/qualityInspect/?img=${json[i].image_url}`;
-                   })
-
-                    let imgCell = row.insertCell(4);
-                    let img = document.createElement('img');
-                    img.src = json[i].image_url;
+                    const imgCell = row.insertCell(5);
+                    const img = document.createElement('img');
+                    img.src = item.image_url;
                     img.width = 40;
+                    console.log('Image URL:', img.src);
                     img.style.borderRadius = '4px';
                     imgCell.appendChild(img);
-                }
-            }
-            else {
-                console.log("Error");
-            }
+
+                    row.onclick = () => {
+                        window.location.href = `http://127.0.0.1:8000/profile/qualityInspect/`;
+                        // window.location.href = `http://127.0.0.1:8000/profile/qualityInspect/?img=${item.image_url}`;
+                    };
+                });
+            } 
         };
         xhr.send();
             let currentNumber = 0;
@@ -408,8 +393,9 @@
                 document.getElementById('counter').textContent = cn_comma;
                 };
             }, 1); // 매 100밀리초(0.1초)마다 숫자를 증가시킴
-
-            // document.writeln(cn1);
+            console.log(currentNumber);
+            
+            
     });
     
 
@@ -426,6 +412,27 @@
 
     console.log(qr_val[0].textContent);
     });
+
+    // 생산 및 불량률 업데이트 기능
+    function updateMetrics() {
+           fetch('/metrics')
+               .then(response => response.json())
+               .then(data => {
+                // document.getElementById('counter').innerText = data.total_production;
+                document.getElementById('currentProduction').innerText = data.ok_count;
+                document.getElementById('productionRate').innerText = data.ok_rate.toFixed(2);
+                document.getElementById('defectiveCount').innerText = data.def_count;
+                document.getElementById('defectRate').innerText = data.def_rate.toFixed(2);
+            })
+            .catch(error => console.error('Error fetching metrics:', error));
+        }
+
+        // 5초마다 메트릭 업데이트
+        document.addEventListener('DOMContentLoaded', () => {
+        updateMetrics();
+        setInterval(updateMetrics, 5000);
+        });
+
     </script>
 
 <!-- <script>
