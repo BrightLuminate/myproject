@@ -320,7 +320,6 @@
                                     <th scope="col">검출시간</th>
                                     <th scope="col">불량종류</th>
                                     <th scope="col">품질측정(mm/RPM)</th>
-                                    <th scope="col">불량 종류</th>
                                     <th scope="col">창고위치</th>
                                     <th scope="col">사진</th>
                                 </tr>
@@ -357,7 +356,7 @@
 
                 json.forEach(item => {
                     const row = tableBody.insertRow();
-                    cell.style.padding = '20.3px 0';
+                    
                     
                     row.insertCell(0).innerText = item.id;
                     row.insertCell(1).innerText = item.Detection_Time;
@@ -371,6 +370,7 @@
                     img.width = 40;
                     console.log('Image URL:', img.src);
                     img.style.borderRadius = '4px';
+                    img.style.padding = '1px 0'
                     imgCell.appendChild(img);
 
                     row.onclick = () => {
@@ -396,7 +396,7 @@
             console.log(currentNumber);
             
             
-    });
+    
     
 
     /* ROS Topic */
@@ -432,24 +432,6 @@
         updateMetrics();
         setInterval(updateMetrics, 5000);
         });
-
+});
     </script>
-
-<!-- <script>
-    window.onload = function() { setActiveMenu(0)
-
-        // flip-clock
-
-        const wow = new WOW(
-        {
-            boxClass:     'wow',      // default
-            animateClass: 'animated', // default
-            offset:       0,          // default
-            mobile:       true,       // default
-            live:         true        // default
-        }
-        )
-        wow.init();
-    }
-</script> -->
 {% endblock %}
