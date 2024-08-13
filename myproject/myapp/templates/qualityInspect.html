@@ -23,7 +23,6 @@
                 </div>
                 <div class="map_box" style="padding: 10px 20px; display: flex; justify-content: center;">
                     <canvas id="myChart01" width="1150" height="270"></canvas>
-                    <!-- <img src=".\img\005.png" style="height:100%;"/> -->
                 </div>
             </div>
             <div class="item01">
@@ -43,8 +42,9 @@
                                   <tr style="border-top: 1px solid #eee;">
                                     <th scope="col">No</th>
                                     <th scope="col">검출시간</th>
+                                    <th scope="col">불량종류</th>
                                     <th scope="col">품질측정(mm/RPM)</th>
-                                    <th scope="col">고객사</th>
+                                    <th scope="col">창고위치</th>
                                     <th scope="col">사진</th>
                                   </tr>
                                 </thead>
@@ -79,7 +79,7 @@
             {% include "layout/foot.html" %}
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
 <script>
   setActiveMenu(2)
   // URL에서 쿼리 문자열을 가져옴
@@ -121,31 +121,16 @@
   // Load initial data
   fetchData("http://127.0.0.1:8000/test01week");
 
-  // // window.onload = function() {
-  // let xhr = new XMLHttpRequest();
-  // let url = "http://127.0.0.1:8000/test01week";  // URL 수정
-
-  // xhr.open("GET", url, true);
-  // xhr.onload = function() {
-  //   if (xhr.readyState === 4 && xhr.status === 200) {
-  //     jsonData = JSON.parse(xhr.response);
-  //     displayTable(jsonData, currentPage, rowsPerPage);
-  //     setupPagination(jsonData.length, rowsPerPage);
-  //     // 데이터가 있는 경우 첫 번째 이미지를 표시합니다.
-  //     if (jsonData.length > 0) {
-  //       displayImage(jsonData[0].image_url);
-  //     }
-  //   } else {
-  //     console.log("Error");
-  //   }
-  // };
-  // xhr.send();
-  // // };
-
-   // Display data in table
    function displayTable(data, page, rows) {
     const tableBody = document.getElementById('imageTable');
     tableBody.innerHTML = "";
+
+    // id 필드를 기준으로 내림차순 정렬합니다.
+    const sortedData = data.sort((a, b) => b.id - a.id);
+
+    // 정상 A 카테고리를 제외한 데이터만 필터링합니다.
+    const filteredData = sortedData.filter(item => item.category !== '출하 창고');
+
     const start = (page - 1) * rows;
     const paginatedItems = data.slice(start, start + rows);
 
@@ -153,10 +138,11 @@
       const row = tableBody.insertRow();
       row.insertCell(0).innerText = item.id;
       row.insertCell(1).innerText = item.Detection_Time;
-      row.insertCell(2).innerText = item.Pull_Measurement;
-      row.insertCell(3).innerText = item.coustomer;
+      row.insertCell(2).innerText = item.defect_types;
+      row.insertCell(3).innerText = item.Pull_Measurement;
+      row.insertCell(4).innerText = item.category;
 
-      const imgCell = row.insertCell(4);
+      const imgCell = row.insertCell(5);
       const img = document.createElement('img');
       img.src = item.image_url;
       img.width = 50;
@@ -208,19 +194,16 @@
     }
   }
 
-  // function displayImage(imageUrl) {
-  //   const displayedImage = document.getElementById('displayedImage');
-  //   displayedImage.src = imageUrl;
-  // }
-
- ///////////////////////
-  // Display selected image
-  function displayImage(imageUrl) {
-    document.getElementById('displayedImage').src = imageUrl;
+  function displayImage(image_url) {
+      const displayedImage = document.getElementById('displayedImage');
+      displayedImage.src = image_url;
   }
 
 // Fetch line chart data
 function fetchChartData(url, type) {
+    const charbox = document.getElementById('charbox');
+    charbox.innerHTML = '<canvas id="myChart01" width="1150" height="270"></canvas>';
+
     fetch(url)
       .then(response => response.json())
       .then(data => {
@@ -228,17 +211,24 @@ function fetchChartData(url, type) {
         let counts = [];
 
         if (type === 'weekly') {
-          const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-          labels = daysOfWeek;
-          counts = daysOfWeek.map(day => data.filter(item => new Date(item.Detection_Time).toLocaleDateString('en-US', { weekday: 'long' }) === day).length);
+            const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            labels = daysOfWeek;
+            counts = daysOfWeek.map(day => data.filter(item => new Date(item.Detection_Time).toLocaleDateString('en-US', { weekday: 'long' }) === day).length);
+        }else if (type === 'daily') {
+            const today = new Date();
+            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+            const daysOfMonth = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+            labels = daysOfMonth;
+            counts = daysOfMonth.map(day => data.filter(item => new Date(item.Detection_Time).getDate() === day).length);
         } else if (type === 'monthly') {
-          const daysOfMonth = Array.from({ length: 31 }, (_, i) => i + 1);
-          labels = daysOfMonth;
-          counts = daysOfMonth.map(day => data.filter(item => new Date(item.Detection_Time).getDate() === day).length);
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            labels = months;
+            counts = months.map(month => data.filter(item => new Date(item.Detection_Time).toLocaleDateString('en-US', { month: 'long' }) === month).length);
         } else if (type === 'yearly') {
-          const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-          labels = monthsOfYear;
-          counts = monthsOfYear.map(month => data.filter(item => new Date(item.Detection_Time).toLocaleDateString('en-US', { month: 'long' }) === month).length);
+            const currentYear = new Date().getFullYear();
+            const years = Array.from({ length: currentYear - 2019 }, (_, i) => 2020 + i);
+            labels = years;
+            counts = years.map(year => data.filter(item => new Date(item.Detection_Time).getFullYear() === year).length);
         }
 
         // Update line chart
@@ -248,11 +238,12 @@ function fetchChartData(url, type) {
           data: {
             labels: labels,
             datasets: [{
-              label: '생산량 대비 뷸량률 그래프',
+              label: '뷸량률 현황',
               data: counts,
               backgroundColor: 'rgba(245, 40, 145, 0.8)',
               borderColor: 'rgba(245, 40, 145, 0.8)',
-              borderWidth: 3
+              borderWidth: 3,
+              tension: 0.5
             }]
           },
           options: {
@@ -269,58 +260,80 @@ function fetchChartData(url, type) {
 
   // Add event listeners to buttons
   document.getElementById('weeklyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01week', 'weekly'));
-  document.getElementById('monthlyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01month', 'monthly'));
+  document.getElementById('daylyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01day', 'daily'));
+  document.getElementById('MonthlyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01month', 'monthly'));
   document.getElementById('yearlyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01year', 'yearly'));
 
-  // Initial line chart load
   fetchChartData('http://127.0.0.1:8000/test01week', 'weekly');
 
-  // Fetch doughnut chart data and initialize chartㄴ
-fetch('http://127.0.0.1:8000/api/chart-data/')
-  .then(response => {
-    console.log('API response received:', response); // Log the response object
-    return response.json();
-  })
-  .then(data => {
-    console.log('Parsed JSON data:', data); 
-    if (data.defective !== undefined && data.normal !== undefined) {
-      const ctx = document.getElementById('myChart02').getContext('2d');
-      new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['불량', '정상'], 
-          datasets: [{
-            label: 'Quality Ratio',
-            data: [data.defective, data.normal],
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(75, 192, 192, 0.2)' 
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(75, 192, 192, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-            title: {
-              display: true,
-              text: '불량 vs 정상 비율' // Title in Korean
+// Initialize the chart variable to null
+window.myChart02 = null;
+
+function updateDoughnutChart() {
+    fetch('http://127.0.0.1:8000/get_daily_classification_counts/')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
             }
-          }
-        },
-      });
-    } else {
-      console.error('Unexpected data format:', data);
-    }
-  })
-  .catch(error => console.error('Error fetching doughnut chart data:', error));
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data fetched for chart:', data);  // Debugging: Log the fetched data
+
+            // Check if the data is in the expected format
+            if (data && data.chart_data && data.chart_data.defective !== undefined && data.chart_data.normal !== undefined) {
+                const ctx = document.getElementById('myChart02').getContext('2d');
+                
+                // Destroy the existing chart instance if it exists and is a Chart.js instance
+                if (window.myChart02 instanceof Chart) {
+                    window.myChart02.destroy();
+                    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear the canvas
+                }
+
+                // Create a new Chart.js instance
+                window.myChart02 = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['불량', '정상'],
+                        datasets: [{
+                            label: 'Quality Ratio',
+                            data: [data.chart_data.defective, data.chart_data.normal],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)', // Color for '불량'
+                                'rgba(75, 192, 192, 0.2)'  // Color for '정상'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',   // Border color for '불량'
+                                'rgba(75, 192, 192, 1)'    // Border color for '정상'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: '불량 vs 정상 비율'
+                            }
+                        }
+                    }
+                });
+            } else {
+                console.error('Data format is incorrect or missing required fields:', data);
+            }
+        })
+        .catch(error => console.error('Error fetching or rendering the doughnut chart:', error));
+}
+
+// Ensure that the chart update function is called when the page loads
+document.addEventListener('DOMContentLoaded', (event) => {
+    updateDoughnutChart();
+    setInterval(updateDoughnutChart, 10000);  // Update every 10 seconds
+});
 </script>
 
 {% endblock %}
