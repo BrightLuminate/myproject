@@ -87,6 +87,8 @@ def mail_view(request):
 def send_mail(request):
     return render(request, 'send.html')
 
+def quality_inspect(request):
+    return render(request, 'quality_inspect.html')
 
 def send_email(request):
     if request.method == "POST":
@@ -110,6 +112,7 @@ def send_email(request):
             return HttpResponse("All fields are required.")
 
     return render(request, 'mail.html')
+
 
 # 이미지 업로드를 처리하는 뷰
 
@@ -151,7 +154,7 @@ def show_image(request):
         return render(request, 'success.html', {'image_data': None, 'name': None})
     
 
-# mysql 이미지 한장 나오느방법
+# mysql 이미지 한장 나오는방법
 
 def image(request):
     image_records = Images.objects.all()
@@ -180,6 +183,7 @@ def show_image(request) :
 def show_video(request) :
     return render(request,'pos.html')
 
+
 # create 해주는 api
 @api_view(['POST'])
 def createTestDatas(request):
@@ -197,16 +201,12 @@ def getTestDatas(request, id):
     print(serializer.data["image_url"])
     return Response(serializer.data)
 
-
 # 특정 날짜 read 해주는 api
 @api_view(['GET'])
 def getTestDate(request):
-
     datas = Images.objects.filter(Detection_Time__date=datetime(2024,7,18))
     serializer = TestDataSerializer(datas, many=True)
-
     return Response(serializer.data)
-
 
 def get_first_and_last_date(year, month):
     # 입력된 년도와 월의 첫 날을 구합니다.
@@ -240,7 +240,6 @@ def getTestday(request):
     serializer = TestDataSerializer(datas, many=True)
     return Response(serializer.data)
 
-
 # 주간 데이터 API 엔드포인트
 @api_view(['GET'])
 def getTestweek(request):
@@ -266,7 +265,6 @@ def getTestmonth(request):
     datas = Images.objects.filter(Detection_Time__range=(start_date, end_date))
     serializer = TestDataSerializer(datas, many=True)
     return Response(serializer.data)
-
 
 # 년간 데이터 API 엔드포인트
 @api_view(['GET'])
@@ -301,7 +299,7 @@ def get_metrics(request):
             FROM 
                 myapp_images
             WHERE 
-                DATE_FORMAT(timestamp, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m');
+                YEAR(date_column) = 2024;  -- 'date_column'을 실제 컬럼명으로 대체
         """)
         row = cursor.fetchone()
 
@@ -309,10 +307,11 @@ def get_metrics(request):
         'total_production': row[0],
         'ok_count': row[1],
         'def_count': row[2],
-        'production_rate': row[3],
-        'defect_rate': row[4],
+        'ok_rate': row[3],
+        'def_rate': row[4],
     }
     return JsonResponse(data)
+
 
 # 도넛
 def get_daily_classification_counts(request):
