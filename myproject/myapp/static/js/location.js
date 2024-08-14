@@ -52,7 +52,7 @@ window.onload=function(){
         `
         const navPointer2 = `
         <img class="a" 
-        style="position: absolute; z-index: 300; width: 25px; bottom:10px; left: -8.5px;"
+        style="position: absolute; z-index: 300; width: 27px; bottom:27px; right: -8px;"
         src="http://127.0.0.1:8000/static/img/location_on.svg"/>
         <i type="button" class="dot_blue_on"></i>
         `
