@@ -16,9 +16,9 @@
                     <div class="color_black">HD-1500-00 실시간</div>
                     <div>
                       <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="daylyBtn">일간</button>
-                        <button type="button" class="btn btn-dark btn-sm notosans400" style="font-size: 11px;" id="weeklyBtn">주간</button>
-                        <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="MonthlyBtn">월간</button>
-                        <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="yearlyBtn">년간</button>
+                      <button type="button" class="btn btn-dark btn-sm notosans400" style="font-size: 11px;" id="weeklyBtn">주간</button>
+                      <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="MonthlyBtn">월간</button>
+                      <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="yearlyBtn">년간</button>
                     </div> 
                 </div>
                 <div id="charbox" class="map_box" style="padding: 10px 20px; display: flex; justify-content: center;">
@@ -192,6 +192,7 @@
         displayedImage.src = image_url;
     }
 
+
     function fetchChartData(url, type) {
         const charbox = document.getElementById('charbox');
         charbox.innerHTML = '<canvas id="myChart01" width="1150" height="270"></canvas>';
@@ -204,6 +205,7 @@
 
                 if (type === 'weekly') {
                     const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                
                     labels = daysOfWeek;
                     counts = daysOfWeek.map(day => data.filter(item => new Date(item.Detection_Time).toLocaleDateString('en-US', { weekday: 'long' }) === day).length);
                 }else if (type === 'daily') {
@@ -231,8 +233,8 @@
                         datasets: [{
                             label: '불량률 현황',
                             data: counts,
-                            backgroundColor: 'rgba(245, 40, 145, 0.8)',
-                            borderColor: 'rgba(245, 40, 145, 0.8)',
+                            backgroundColor: 'rgba(0, 84, 255, 0.5)',
+                            borderColor: 'rgba(0, 84, 255, 0.8)',
                             borderWidth: 3,
                             tension: 0.5 // 부드러운 곡선을 만들기 위해 장력을 설정합니다.
                         }]
@@ -248,14 +250,27 @@
             })
             .catch(error => console.error('Error fetching chart data:', error));
     }
-
-    document.getElementById('weeklyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01week', 'weekly'));
     document.getElementById('daylyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01day', 'daily'));
+    document.getElementById('weeklyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01week', 'weekly'));
     document.getElementById('MonthlyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01month', 'monthly'));
     document.getElementById('yearlyBtn').addEventListener('click', () => fetchChartData('http://127.0.0.1:8000/test01year', 'yearly'));
 
     fetchChartData('http://127.0.0.1:8000/test01week', 'weekly');
  
+    //이정은 버튼 스타일
+    let chartBtn = document.querySelectorAll(".item02  button");
+
+    chartBtn.forEach(button => {
+    button.addEventListener('click', () => {
+        chartBtn.forEach(btn => {
+        btn.classList.remove('btn-dark');
+        btn.classList.add('btn-light');
+        });
+
+        button.classList.remove('btn-light');
+        button.classList.add('btn-dark');
+    });
+    });
 // Initialize the chart variable to null
 window.myChart02 = null;
 
