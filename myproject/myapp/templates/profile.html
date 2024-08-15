@@ -17,38 +17,20 @@
                 </div>
                 <div class="w_30 d_j_center min-w400">
                     <span>현재 생산</span>
-                    <span id="currentProduction" class="fons22 whit roboto400">-</span>
+                    <span id="currentProduction" class="fons22 whit roboto400"></span>
                     <span>개</span>
                     <span class="gray70">/</span>
-                    <span id="ok_percent" class="fons22 roboto300">-</span>
-                    <span >%</span>
+                    <span id="ok_percent" class="fons22 roboto300"></span>
+                    <span>%</span>
                 </div>
                 <div class="w_30 d_j_end min-w400">
                     <span>불량</span>
-                    <span id="defectiveCount" class="fons22 whit roboto400">-</span>
+                    <span id="defectiveCount" class="fons22 whit roboto400"></span>
                     <span>개</span>
                     <span class="gray70">/</span>
-                    <span id="def_percent" class="fons22 roboto300">-</span>
+                    <span id="def_percent" class="fons22 roboto300"></span>
                     <span>%</span>
                 </div>
-                <!-- <div class="wow flipInX" data-wow-duration="2s" data-wow-delay="0.5s" data-wow-iteration="infinite">
-                    <div class="digit">
-                        <div class="flip-top">5</div>
-                        <div class="flip-bottom">5</div>
-                    </div>
-                    <div class="digit">
-                        <div class="flip-top">0</div>
-                        <div class="flip-bottom">0</div>
-                    </div>
-                    <div class="digit">
-                        <div class="flip-top">0</div>
-                        <div class="flip-bottom">0</div>
-                    </div>
-                    <div class="digit">
-                        <div class="flip-top">0</div>
-                        <div class="flip-bottom">0</div>
-                    </div>                 
-                </div>                 -->
             </div>
 
             <div class="center_box_01_02">
@@ -357,7 +339,6 @@
                 json.forEach(item => {
                     const row = tableBody.insertRow();
                     
-                    
                     row.insertCell(0).innerText = item.id;
                     row.insertCell(1).innerText = item.Detection_Time;
                     row.insertCell(2).innerText = item.defect_types;
@@ -413,25 +394,17 @@
     console.log(qr_val[0].textContent);
     });
 
-    // 생산 및 불량률 업데이트 기능
-    function updateMetrics() {
-           fetch('/metrics')
-               .then(response => response.json())
-               .then(data => {
-                // document.getElementById('counter').innerText = data.total_production;
-                document.getElementById('currentProduction').innerText = data.ok_count;
-                document.getElementById('productionRate').innerText = data.ok_rate.toFixed(2);
-                document.getElementById('defectiveCount').innerText = data.def_count;
-                document.getElementById('defectRate').innerText = data.def_rate.toFixed(2);
-            })
-            .catch(error => console.error('Error fetching metrics:', error));
-        }
-
-        // 5초마다 메트릭 업데이트
-        document.addEventListener('DOMContentLoaded', () => {
-        updateMetrics();
-        setInterval(updateMetrics, 5000);
-        });
+    fetch('/production_data/')
+    .then(response => response.json())
+    .then(data => {
+        console.log(data); // 데이터 확인
+        document.getElementById('counter').textContent = data.total_produced;
+        document.getElementById('currentProduction').textContent = data.current_production;
+        document.getElementById('ok_percent').textContent = data.current_production_rate.toFixed(2);
+        document.getElementById('defectiveCount').textContent = data.defective_count;
+        document.getElementById('def_percent').textContent = data.defect_rate.toFixed(2);
+    })
+    .catch(error => console.error('Error:', error));
 });
     </script>
 {% endblock %}
