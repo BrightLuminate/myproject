@@ -35,6 +35,8 @@ from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import HttpResponse
+from django.db.models import Count, Q
+from .models import Images  # MyAppImage 대신 Images로 수정
 
 
 logger = logging.getLogger('django')
@@ -284,33 +286,44 @@ def get_chart_data(request):
     return Response({'defective': defective_count, 'normal': normal_count})
 
 #  정상률 불량률 수치 
-counters = defaultdict(int)
-
-# 메트릭 데이터를 반환하는 뷰
-def get_metrics(request):
-    with connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT 
-                COUNT(*) AS total_production,
-                SUM(CASE WHEN classification = 'ok_front' THEN 1 ELSE 0 END) AS ok_count,
-                SUM(CASE WHEN classification = 'def_front' THEN 1 ELSE 0 END) AS def_count,
-                (SUM(CASE WHEN classification = 'ok_front' THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS ok_rate,
-                (SUM(CASE WHEN classification = 'def_front' THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS def_rate
-            FROM 
-                myapp_images
-            WHERE 
-                YEAR(date_column) = 2024;  -- 'date_column'을 실제 컬럼명으로 대체
-        """)
-        row = cursor.fetchone()
-
+def get_production_data(request):
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+    
+    # 이번 달의 모든 데이터를 가져옵니다.
+    total_produced = Images.objects.filter(
+        Detection_Time__year=current_year,
+        Detection_Time__month=current_month
+    ).count()
+    
+    # 양품 개수
+    current_production = Images.objects.filter(
+        Detection_Time__year=current_year,
+        Detection_Time__month=current_month,
+        classification='ok_front'
+    ).count()
+    
+    # 불량 개수
+    defective_count = Images.objects.filter(
+        Detection_Time__year=current_year,
+        Detection_Time__month=current_month,
+        classification='def_front'
+    ).count()
+    
+    target_production = 10000  # 이 값을 동적으로 설정할 수 있습니다.
+    current_production_rate = (current_production / target_production) * 100 if target_production > 0 else 0
+    defect_rate = (defective_count / total_produced) * 100 if total_produced > 0 else 0
+    
     data = {
-        'total_production': row[0],
-        'ok_count': row[1],
-        'def_count': row[2],
-        'ok_rate': row[3],
-        'def_rate': row[4],
+        'total_produced': total_produced,
+        'current_production': current_production,
+        'defective_count': defective_count,
+        'current_production_rate': current_production_rate,
+        'defect_rate': defect_rate,
     }
+    
     return JsonResponse(data)
+
 
 
 # 도넛
