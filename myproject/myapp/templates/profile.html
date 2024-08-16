@@ -352,17 +352,18 @@
 
                     img.src = item.image_url;
                     // console.log('Image URL:', img.src);
-                    img.width = 80;
+                    img.width = 65;
                     // img.height = 50;
-                    // img.style.display = 'block'; // 이미지가 중앙 정렬되도록 block으로 설정
-                    // img.style.margin='0 auto';
+
+                    imgCell.style.display='flex';
+                    imgCell.style.justifyContent='center';
 
                     imgDiv.style.display = 'flex'; // 이미지가 중앙 정렬되도록 block으로 설정
                     imgDiv.style.alignItems='flex-start';
                     imgDiv.style.justifyContent='center';
 
                     imgDiv.style.width='40px';
-                    imgDiv.style.height= '25px';
+                    imgDiv.style.height= '25.43px';
                     
                     imgDiv.style.borderRadius = '4px';
                     imgDiv.style.padding = '1px 0';
