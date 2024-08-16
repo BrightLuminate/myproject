@@ -289,17 +289,20 @@ def get_chart_data(request):
 def get_production_data(request):
     current_month = datetime.now().month
     current_year = datetime.now().year
+    current_date = datetime.now().day
     
     # 이번 달의 모든 데이터를 가져옵니다.
     total_produced = Images.objects.filter(
         Detection_Time__year=current_year,
-        Detection_Time__month=current_month
+        Detection_Time__month=current_month,
+        Detection_Time__day=current_date,
     ).count()
     
     # 양품 개수
     current_production = Images.objects.filter(
         Detection_Time__year=current_year,
         Detection_Time__month=current_month,
+        Detection_Time__day=current_date,
         classification='ok_front'
     ).count()
     
@@ -307,11 +310,12 @@ def get_production_data(request):
     defective_count = Images.objects.filter(
         Detection_Time__year=current_year,
         Detection_Time__month=current_month,
+        Detection_Time__day=current_date,
         classification='def_front'
     ).count()
     
-    target_production = 10000  # 이 값을 동적으로 설정할 수 있습니다.
-    current_production_rate = (current_production / target_production) * 100 if target_production > 0 else 0
+    target_production = 10000 # 이 값을 동적으로 설정할 수 있습니다.
+    current_production_rate = (total_produced / target_production) * 100 if target_production > 0 else 0
     defect_rate = (defective_count / total_produced) * 100 if total_produced > 0 else 0
     
     data = {
