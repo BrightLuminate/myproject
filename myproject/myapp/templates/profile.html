@@ -300,7 +300,6 @@
                                 <tr style="border-top: 1px solid #eee;">
                                     <th scope="col">No</th>
                                     <th scope="col">검출시간</th>
-                                    <th scope="col">불량종류</th>
                                     <th scope="col">품질측정(mm/RPM)</th>
                                     <th scope="col">창고위치</th>
                                     <th scope="col">사진</th>
@@ -320,7 +319,7 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         setActiveMenu(0) // 페이지 넘버
-
+        function updateTable() {
         // Ajax 요청
         let xhr = new XMLHttpRequest(); 
         let url = "http://127.0.0.1:8000//test01week";       
@@ -329,56 +328,69 @@
         xhr.onload = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 let json = JSON.parse(xhr.response);
+
                 json.sort((a, b) => b.id - a.id);
                 json = json.filter(item => item.category !== '출하 창고');
                 json.length = 7;
 
                 let tableBody = document.getElementById('imageTable');
                 
+                tableBody.innerHTML = '';
 
                 json.forEach(item => {
                     const row = tableBody.insertRow();
                     
                     row.insertCell(0).innerText = item.id;
                     row.insertCell(1).innerText = item.Detection_Time;
-                    row.insertCell(2).innerText = item.defect_types;
-                    row.insertCell(3).innerText = item.Pull_Measurement;
-                    row.insertCell(4).innerText = item.category;
+                    // row.insertCell(2).innerText = item.defect_types;
+                    row.insertCell(2).innerText = item.Pull_Measurement;
+                    row.insertCell(3).innerText = item.category;
 
-                    const imgCell = row.insertCell(5);
+                    const imgCell = row.insertCell(4);
                     const img = document.createElement('img');
                     img.src = item.image_url;
                     img.width = 40;
+                    // img.height = 25;
+                    img.style.maxHeight= '25px';
                     console.log('Image URL:', img.src);
                     img.style.borderRadius = '4px';
-                    img.style.padding = '1px 0'
+                    img.style.padding = '1px 0';
+                    img.style.overflow = "hidden"
                     imgCell.appendChild(img);
 
                     row.onclick = () => {
                         window.location.href = `http://127.0.0.1:8000/profile/qualityInspect/`;
-                        // window.location.href = `http://127.0.0.1:8000/profile/qualityInspect/?img=${item.image_url}`;
+                    // window.location.href = `http://127.0.0.1:8000/profile/qualityInspect/?img=${item.image_url}`;
                     };
                 });
             } 
         };
         xhr.send();
+    }
+     // Update the table every 5 seconds
+     setInterval(updateTable, 5000);
+
+    // Initial load
+    updateTable();
+
             let currentNumber = 0;
 
             let interval = setInterval(() => {
             document.getElementById('counter').textContent = currentNumber;
-            currentNumber += 100;
-            if (currentNumber > 105001) {
+            
+            if (currentNumber >= 10000) {
                 clearInterval(interval);
                 const cn_comma = currentNumber.toLocaleString('ko-KR');
                 console.log("localestring: ", cn_comma);
                 document.getElementById('counter').textContent = cn_comma;
                 };
+            currentNumber += 100;
             }, 1); // 매 100밀리초(0.1초)마다 숫자를 증가시킴
             console.log(currentNumber);
             
             
-    
-    
+
+
 
     /* ROS Topic */
     let location_nav = document.querySelector(".map_box");
@@ -386,7 +398,7 @@
     let qr_select = document.querySelectorAll(".qr");
     console.log(qr_select);
 
-    
+
     qr_val = document.querySelectorAll('.qr')
     console.log(qr_val)
     qr_val[0].addEventListener('change', () => {
@@ -394,17 +406,28 @@
     console.log(qr_val[0].textContent);
     });
 
+    function updateProductionData() {
     fetch('/production_data/')
-    .then(response => response.json())
-    .then(data => {
-        console.log(data); // 데이터 확인
-        document.getElementById('counter').textContent = data.total_produced;
-        document.getElementById('currentProduction').textContent = data.current_production;
-        document.getElementById('ok_percent').textContent = data.current_production_rate.toFixed(2);
-        document.getElementById('defectiveCount').textContent = data.defective_count;
-        document.getElementById('def_percent').textContent = data.defect_rate.toFixed(2);
-    })
-    .catch(error => console.error('Error:', error));
-});
-    </script>
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // 데이터 확인
+            // document.getElementById('counter').textContent = data.total_produced;
+            document.getElementById('currentProduction').textContent = data.total_produced;
+            // document.getElementById('currentProduction').textContent = data.current_production;
+            document.getElementById('ok_percent').textContent = data.current_production_rate.toFixed(2);
+            document.getElementById('defectiveCount').textContent = data.defective_count;
+            document.getElementById('def_percent').textContent = data.defect_rate.toFixed(2);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // 5초마다 데이터 업데이트
+    setInterval(updateProductionData, 5000);
+
+    // 페이지가 로드될 때 초기 데이터를 가져오기 위해 첫 번째 실행
+    updateProductionData();
+
+
+    });
+</script>
 {% endblock %}
