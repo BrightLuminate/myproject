@@ -50,8 +50,8 @@
                             <tbody id="imageTable" class="cursor">
                             </tbody>
                         </table>
-                        <div id="imageDisplay" style="width: 510px; height: 355px; overflow: hidden; background-color: #eee; border-radius: 5px;">
-                            <img id="displayedImage" src="" style="width: 100%; height: 100%;" />
+                        <div id="imageDisplay" style="width: 510px; height: 355px; overflow: hidden; background-color: #eee; border-radius: 5px; display: flex; justify-content: center;">
+                            <img id="displayedImage" src="" style="width: 250%; height: 200%;" />
                         </div>
                     </div>
                 </div>
@@ -135,13 +135,28 @@
         row.insertCell(3).innerText = item.category;
         
         const imgCell = row.insertCell(4);
+        const imgDiv = document.createElement('div')
         const img = document.createElement('img');
+
+        imgCell.style.display='flex';
+        imgCell.style.justifyContent='center';
         img.src = item.image_url;       
-        img.width = 50;
-        img.style.maxHeight= '29px';
-        img.style.borderRadius = '4px';
-        img.style.overflow = "hidden"
-        imgCell.appendChild(img);
+        img.width = 100;
+        // img.height = 100;
+
+        imgDiv.style.display = 'flex'; // 이미지가 중앙 정렬되도록 block으로 설정
+        imgDiv.style.alignItems='flex-start';
+        imgDiv.style.justifyContent='center';
+
+        imgDiv.style.width='50px';
+        imgDiv.style.height='28px';
+
+        imgDiv.style.borderRadius = '4px';
+        imgDiv.style.padding = '1px 0';
+        imgDiv.style.overflow = "hidden";
+
+        imgDiv.appendChild(img); // imgDiv 안에 img를 추가
+        imgCell.appendChild(imgDiv); // imgCell 안에 imgDiv를 추가
         
         row.onclick = () => displayImage(item.image_url);
     }); 
