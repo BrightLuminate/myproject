@@ -13,7 +13,7 @@
         <div class="center_box_02_01">
             <div class="item02" style="overflow: hidden;">
                 <div class="notosans400 fons13" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
-                    <div class="color_black">실시간</div>
+                    <div class="color_black">기간별 불량률</div>
                     <div>
                       <button type="button" class="btn btn-light btn-sm notosans400" style="font-size: 11px;" id="daylyBtn">일간</button>
                       <button type="button" class="btn btn-dark btn-sm notosans400" style="font-size: 11px;" id="weeklyBtn">주간</button>
@@ -30,7 +30,7 @@
                 <div id="charbox" class="map_box" style="padding: 10px 70px; margin-top: 12px;">
                     <canvas id="myChart02" width="270" height="270"></canvas>
                 </div>
-            </div>            
+            </div>          
         </div>
         <div class="card" style="margin: 0 20px;">
             <div class="card-body">
@@ -42,7 +42,6 @@
                                 <tr style="border-top: 1px solid #eee;">
                                     <th scope="col">No</th>
                                     <th scope="col">검출시간</th>
-                                    <th scope="col">불량종류</th>
                                     <th scope="col">품질측정(mm/RPM)</th>
                                     <th scope="col">창고위치</th>
                                     <th scope="col">사진</th>
@@ -132,14 +131,16 @@
         const row = tableBody.insertRow();
         row.insertCell(0).innerText = item.id;
         row.insertCell(1).innerText = item.Detection_Time;
-        row.insertCell(2).innerText = item.defect_types;
-        row.insertCell(3).innerText = item.Pull_Measurement;
-        row.insertCell(4).innerText = item.category;
+        row.insertCell(2).innerText = item.Pull_Measurement;
+        row.insertCell(3).innerText = item.category;
         
-        const imgCell = row.insertCell(5);
+        const imgCell = row.insertCell(4);
         const img = document.createElement('img');
         img.src = item.image_url;       
         img.width = 50;
+        img.style.maxHeight= '29px';
+        img.style.borderRadius = '4px';
+        img.style.overflow = "hidden"
         imgCell.appendChild(img);
         
         row.onclick = () => displayImage(item.image_url);
@@ -321,7 +322,7 @@ function updateDoughnutChart() {
                             },
                             title: {
                                 display: true,
-                                text: '불량 vs 정상 비율'
+                                // text: '불량 vs 정상 비율'
                             }
                         }
                     }
