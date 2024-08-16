@@ -347,16 +347,33 @@
                     row.insertCell(3).innerText = item.category;
 
                     const imgCell = row.insertCell(4);
+                    const imgDiv = document.createElement('div')
                     const img = document.createElement('img');
+
                     img.src = item.image_url;
-                    img.width = 40;
-                    // img.height = 25;
-                    img.style.maxHeight= '25px';
-                    console.log('Image URL:', img.src);
-                    img.style.borderRadius = '4px';
-                    img.style.padding = '1px 0';
-                    img.style.overflow = "hidden"
-                    imgCell.appendChild(img);
+                    // console.log('Image URL:', img.src);
+                    img.width = 80;
+                    // img.height = 50;
+                    // img.style.display = 'block'; // 이미지가 중앙 정렬되도록 block으로 설정
+                    // img.style.margin='0 auto';
+
+                    imgDiv.style.display = 'flex'; // 이미지가 중앙 정렬되도록 block으로 설정
+                    imgDiv.style.alignItems='flex-start';
+                    imgDiv.style.justifyContent='center';
+
+                    imgDiv.style.width='40px';
+                    imgDiv.style.height= '25px';
+                    
+                    imgDiv.style.borderRadius = '4px';
+                    imgDiv.style.padding = '1px 0';
+                    imgDiv.style.overflow = "hidden";
+
+                    // imgCell.style.height = '25px'; // 컨테이너의 높이를 이미지의 절반으로 설정
+                    // imgCell.style.overflow = "hidden"; // 컨테이너에서 넘치는 부분 숨김
+                    // imgCell.style.display = "flex"; // 이미지 중앙 정렬을 위해 flexbox 사용
+                    // imgCell.style.alignItems = "center";
+                    imgDiv.appendChild(img); // imgDiv 안에 img를 추가
+                    imgCell.appendChild(imgDiv); // imgCell 안에 imgDiv를 추가
 
                     row.onclick = () => {
                         window.location.href = `http://127.0.0.1:8000/profile/qualityInspect/`;
@@ -368,7 +385,7 @@
         xhr.send();
     }
      // Update the table every 5 seconds
-     setInterval(updateTable, 5000);
+     setInterval(updateTable, 500000);
 
     // Initial load
     updateTable();
